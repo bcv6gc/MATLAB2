@@ -2,6 +2,7 @@
 eps0=8.85418782e-12;
 mu0=1.2566370614e-6;
 c0=1/sqrt(eps0*mu0);
+%%
 frequency = dlmread('SL_HDPE.s2p',' ',9,0,[9 0 209 0]);
 g0=1i*sqrt(omega.*omega*1*1/c0/c0);
 %s11_mag = dlmread('SL_HDPE.s2p',' ',9,1,[9 1 209 1]);

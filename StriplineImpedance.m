@@ -1,0 +1,9 @@
+t = 0.048; %thickness cm
+b = 1; % ground seperation
+w = 1.7925; %width of conductor
+%w = 1.316; %width of conductor
+denom = 1 - t/b;
+epsilon = 8.854e-12; %vaccum permittivity
+epsilon_r = 1; %relative epsilon
+cap_f = epsilon/pi*(2/denom*log(1/denom + 1)-(1/denom - 1)*log(1/denom^2 -1));
+z = 94.15/(w/b/denom + cap_f/epsilon_r);
