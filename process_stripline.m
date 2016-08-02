@@ -18,7 +18,7 @@ hold on
 plot(frequency/1e9,imag(s21(:,1)))
 for i=1:length(frequency)
     f=frequency(i);
-    tt = fsolve(@(xx) get_s21(xx,f,thickness,s21(i),s12(i)),[1;0]);
+    tt = fsolve(@(xx) get_s21v2(xx,f,thickness,s21(i),s12(i)),[1;0]);
     erx(i)=tt(1)+1i*tt(2);
 end
 figure(5)

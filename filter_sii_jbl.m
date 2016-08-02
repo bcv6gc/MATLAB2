@@ -1,8 +1,8 @@
 function y=filter_sii_jbl(x,c1,w1)
+fft_length = 2001;
+t1=ifft(x,fft_length);
 
-t1=ifft(x,2001);
-
-figure(44)
+figure
 plot(abs(t1)/max(abs(t1)));
 hold on
 
@@ -11,10 +11,10 @@ hold on
 %t_win=exp(-(t-c1).^2/w1);
 if c1 > w1/2
     temp_win = window(@chebwin,2*c1);
-    t_win = [temp_win;zeros(2001 - 2*c1,1)];
+    t_win = [temp_win;zeros(fft_length - 2*c1,1)];
 else
     temp_win = window(@chebwin,w1);
-    t_win = [zeros(c1 - w1/2,1);temp_win;zeros(2001 - (c1 + w1/2),1)];
+    t_win = [zeros(c1 - w1/2,1);temp_win;zeros(fft_length - (c1 + w1/2),1)];
 end
 
 plot(t_win*1.1,'g--')
