@@ -18,7 +18,7 @@ air11=complex((10.^(air_mag11/20)).*exp(1i*air_phase11/180*pi));
 air21=complex((10.^(air_mag21/20)).*exp(1i*air_phase21/180*pi));
 air12=complex((10.^(air_mag12/20)).*exp(1i*air_phase12/180*pi));
 
-medium_file = 'Calibrated_coax_20mmHDPE-7-28-16.s2p';
+medium_file = 'Calibrated_coax_5mmCoZn-7-28-16.s2p';
 med_mag11 = dlmread(medium_file,' ',9,1,[9 1 209 1]);
 med_phase11 = dlmread(medium_file,' ',9,2,[9 2 209 2]);
 med_mag21 = dlmread(medium_file,' ',9,3,[9 3 209 3]);
@@ -43,7 +43,7 @@ t=zeros(length(time_air21),1);
 t(:,1)=1:1:length(t);
 win_length = 25000;
 t_win=exp(-(t-c1).^2/win_length);
-%
+%{
 figure(2)
 plot(t_win*tt,'g--','linewidth',2)
 hold on
@@ -77,33 +77,96 @@ s11=filtered_med11./filtered_air11.*exp(-1i*beta*material_width);
 s21=filtered_med21./filtered_air21.*exp(-1i*beta*material_width);
 s12=filtered_med12./filtered_air12.*exp(-1i*beta*material_width);
 freq2 = frequency*1e9;
-erx = zeros(size(frequency));
-for i=1:length(freq2)
-    f=freq2(i);
-    tt = fsolve(@(xx) get_s21v2(xx,f,material_width,s21(i),s12(i)),[1;0]);
-    erx(i)=tt(1)+1i*tt(2);
+Nf=length(freq2);
+%*****************************************
+% freqyency loop begin
+Fr = freq2;
+Fghz = frequency;
+fghz = frequency;
+R = s11;
+T = s21;
+for it=1:Nf
+%{
+f=f2(it);
+Fr(it)=f;
+Fghz(it)=f/1e9;
+fghz=f/1e9;
+Z0=eta0; W=2*pi*Fr(it); beta0=W/c;
+%*******************************************
+% combine magnitude and phase of the S11 and S21
+R(it)=Mag1(it)*exp(1i*Ph1(it)*rad);
+T(it)=Mag2(it)*exp(1i*Ph2(it)*rad);
+%*******************************************
+% m loop begin
+%}
+Z0=eta0; W=2*pi*Fr(it); beta0=W/c;
+Max=0; % ---------m value set up
+itt=0;
+for m=-Max:Max
+itt=itt+1;
+%***************************************************
+% using formulas from Robust method
+Tp=T(it);
+Z21(it)=sqrt(((1+R(it))^2-Tp^2)/((1-R(it))^2-Tp^2));
+Z22(it)=-sqrt(((1+R(it))^2-Tp^2)/((1-R(it))^2-Tp^2));
+expinkd1(it)=Tp/(1-R(it)*(Z21(it)-1)/(Z21(it)+1));
+expinkd2(it)=Tp/(1-R(it)*(Z22(it)-1)/(Z22(it)+1));
+if abs(real(Z21(it)))>=0.005 && real(Z21(it))>=0
+expinkd(it)=expinkd1(it);
+Z2(it)=Z21(it);
 end
-figure(5)
-plot(frequency,real(erx),frequency,imag(erx))
-xlabel('Frequency (GHz)')
-title('Complex Permittivity 20mm HDPE Sample')
-legend('Real(\epsilon_r)','Imag(\epsilon_r)')
-
-%%
-%NRW from ASTM paper
-xi = (s11.^2 - s21.^2 + 1)./(2*s11);
-gamma_minus = xi - sqrt(xi.^2 - 1);
-gamma_plus = xi + sqrt(xi.^2 - 1);
-gamma = zeros(size(gamma_plus));
-gamma(abs(gamma_minus) <= 1) = gamma_minus(abs(gamma_minus) < 1);
-gamma(abs(gamma_plus) <= 1) = gamma_plus(abs(gamma_plus) < 1);
-trans = (s11 + s21 - gamma)./(1 - (s11 + s21).*gamma);
-inverse_square_delta = -(log(1./trans)./(2*pi*material_width)).^2;
-inverse_delta = sqrt(inverse_square_delta);
-mu = (1+gamma)./(1-gamma).*inverse_delta./sqrt(beta);
-epsilon = 4*pi^2*beta.*inverse_square_delta./mu;
-figure
-subplot(211)
-plot(frequency, real(epsilon), frequency, imag(epsilon))
-subplot(212)
-plot(frequency, real(mu), frequency, imag(mu))
+if abs(real(Z21(it)))>=0.005 && real(Z21(it))<0
+expinkd(it)=expinkd2(it);
+Z2(it)=Z22(it);
+end
+if abs(real(Z21(it)))<0.005 && abs(expinkd1(it))<=1
+expinkd(it)=expinkd1(it);
+Z2(it)=Z21(it);
+end
+if abs(real(Z21(it)))<0.005 && abs(expinkd1(it))>1
+expinkd(it)=expinkd2(it);
+Z2(it)=Z22(it);
+end
+ni(it)=-1/(beta0*d)*1i*real(log(expinkd(it))); % imag of n
+nr(it,itt)=1/(beta0*d)*(imag(log(expinkd(it)))+2*m*pi); %real of n
+n2(it,itt)=nr(it,itt)+ni(it);
+Er2(it,itt)=n2(it,itt)/Z2(it);
+Mr2(it,itt)=n2(it,itt)*Z2(it);
+end % end of m loop
+end % end of frequency loop
+figure(1)
+subplot(121);
+plot(Fghz,real(Mr2));
+xlabel('Frequency in GHz')
+ylabel('Re(\mu)')
+subplot(122)
+plot(Fghz,imag(Mr2));
+xlabel('Frequency in GHz')
+ylabel('Im(\mu)')
+figure(2)
+subplot(121);
+plot(Fghz,real(Er2));
+xlabel('Frequency in GHz')
+ylabel('Re(\epsilon)')
+subplot(122)
+plot(Fghz,imag(Er2));
+xlabel('Frequency in GHz')
+ylabel('Im(\epsilon)');
+figure(3)
+subplot(121);
+plot(Fghz,real(n2));
+xlabel('Frequency in GHz')
+ylabel('Re(n)')
+subplot(122)
+plot(Fghz,imag(n2));
+xlabel('Frequency in GHz')
+ylabel('Im(n)')
+figure(4)
+subplot(121);
+plot(Fghz,real(Z2));
+xlabel('Frequency in GHz')
+ylabel('Re(Z)')
+subplot(122)
+plot(Fghz,imag(Z2));
+xlabel('Frequency in GHz')
+ylabel('Im(Z)');

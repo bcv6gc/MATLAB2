@@ -23,7 +23,7 @@ M2r=load('S21_mag.txt');
 P1r=load('S11_ph.txt');
 P2r=load('S21_ph.txt');
 %}
-thin_file = 'Brandon(2)thickhdpecoax.s2p';
+thin_file = 'Calibrated_coax_20mmHDPE-7-28-16.s2p';
 frequency = dlmread(thin_file,' ',9,0,[9 0 209 0])/1e9;
 M1r = dlmread(thin_file,' ',9,1,[9 1 209 1]);
 P1r = dlmread(thin_file,' ',9,2,[9 2 209 2]);
