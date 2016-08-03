@@ -4,7 +4,7 @@ mu0=1.2566370614e-6;
 c0=1/sqrt(eps0*mu0);
 material_width = 20e-3;
 %%
-air_file = 'Calibrated_coax_air-7-28-16.s2p';
+air_file = 'stripline11mmAir.s2p';
 frequency = dlmread(air_file,' ',9,0,[9 0 209 0])/1e9;
 air_mag11 = dlmread(air_file,' ',9,1,[9 1 209 1]);
 air_phase11 = dlmread(air_file,' ',9,2,[9 2 209 2]);
@@ -18,7 +18,7 @@ air11=complex((10.^(air_mag11/20)).*exp(1i*air_phase11/180*pi));
 air21=complex((10.^(air_mag21/20)).*exp(1i*air_phase21/180*pi));
 air12=complex((10.^(air_mag12/20)).*exp(1i*air_phase12/180*pi));
 
-medium_file = 'Calibrated_coax_20mmHDPE-7-28-16.s2p';
+medium_file = 'stripline11mmHDPE20mm.s2p';
 med_mag11 = dlmread(medium_file,' ',9,1,[9 1 209 1]);
 med_phase11 = dlmread(medium_file,' ',9,2,[9 2 209 2]);
 med_mag21 = dlmread(medium_file,' ',9,3,[9 3 209 3]);
@@ -84,7 +84,8 @@ for i=1:length(freq2)
     erx(i)=tt(1)+1i*tt(2);
 end
 figure(5)
-plot(frequency,real(erx),frequency,imag(erx))
+plot(frequency,real(tenmmhdpe),frequency,imag(tenmmhdpe))
 xlabel('Frequency (GHz)')
-title('Complex Permittivity 20mm HDPE Sample')
+title('Stripline - 20mm HDPE Sample')
 legend('Real(\epsilon_r)','Imag(\epsilon_r)')
+grid on

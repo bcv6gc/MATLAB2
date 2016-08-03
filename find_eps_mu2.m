@@ -18,7 +18,8 @@ air11=complex((10.^(air_mag11/20)).*exp(1i*air_phase11/180*pi));
 air21=complex((10.^(air_mag21/20)).*exp(1i*air_phase21/180*pi));
 air12=complex((10.^(air_mag12/20)).*exp(1i*air_phase12/180*pi));
 
-medium_file = 'Calibrated_coax_5mmCoZn-7-28-16.s2p';
+medium_file = 'Calibrated_coax_20mmHDPE-7-28-16.s2p';
+%medium_file = 'Calibrated_coax_5mmCoZn-7-28-16.s2p';
 med_mag11 = dlmread(medium_file,' ',9,1,[9 1 209 1]);
 med_phase11 = dlmread(medium_file,' ',9,2,[9 2 209 2]);
 med_mag21 = dlmread(medium_file,' ',9,3,[9 3 209 3]);
@@ -100,7 +101,7 @@ T(it)=Mag2(it)*exp(1i*Ph2(it)*rad);
 % m loop begin
 %}
 Z0=eta0; W=2*pi*Fr(it); beta0=W/c;
-Max=0; % ---------m value set up
+Max=1; % ---------m value set up
 itt=0;
 for m=-Max:Max
 itt=itt+1;
@@ -154,19 +155,19 @@ xlabel('Frequency in GHz')
 ylabel('Im(\epsilon)');
 figure(3)
 subplot(121);
-plot(Fghz,real(n2));
+plot(Fghz,abs(n2));
 xlabel('Frequency in GHz')
 ylabel('Re(n)')
 subplot(122)
-plot(Fghz,imag(n2));
+plot(Fghz,angle(n2));
 xlabel('Frequency in GHz')
 ylabel('Im(n)')
 figure(4)
 subplot(121);
-plot(Fghz,real(Z2));
+plot(Fghz,abs(Z2));
 xlabel('Frequency in GHz')
 ylabel('Re(Z)')
 subplot(122)
-plot(Fghz,imag(Z2));
+plot(Fghz,angle(Z2));
 xlabel('Frequency in GHz')
 ylabel('Im(Z)');
