@@ -1,12 +1,12 @@
-close all
-clc
-clear
+%close all
+%clc
+%clear
 
 eps0=8.85418782e-12;
 mu0=1.2566370614e-6;
 c0=1/sqrt(eps0*mu0);
 
-medium_file = '7-14-thick.s2p';
+medium_file = '7-14-medium.s2p';
 frequency = dlmread(medium_file,' ',9,0,[9 0 209 0])/1e9;
 med_mag11 = dlmread(medium_file,' ',9,1,[9 1 209 1]);
 med_phase11 = dlmread(medium_file,' ',9,2,[9 2 209 2]);
@@ -99,8 +99,8 @@ figure(5)
 plot(frequency,angle(med4)/pi*180)
 hold on
 
-d=20e-3;
-fa=frequency*1e9
+d=10e-3;
+fa=frequency*1e9;
 for iy=1:length(fa)
     
     z=0;
@@ -168,7 +168,7 @@ end
 figure(1)
 plot(frequency,abs(t21_true))
 grid on
-
+legend('original','time domain filtering','theory')
 figure(5)
 plot(frequency,angle(t21_true)/pi*180)
 
