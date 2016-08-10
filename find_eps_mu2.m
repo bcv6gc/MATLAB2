@@ -2,7 +2,10 @@
 eps0=8.85418782e-12;
 mu0=1.2566370614e-6;
 c0=1/sqrt(eps0*mu0);
+eta0=sqrt(mu0/eps0); % free space
+c=1/sqrt(eps0*mu0);
 material_width = 20e-3;
+d = material_width;
 %%
 air_file = 'Calibrated_coax_air-7-28-16.s2p';
 frequency = dlmread(air_file,' ',9,0,[9 0 209 0])/1e9;
@@ -74,7 +77,7 @@ filtered_med21=temp_med21(1:201);
 filtered_med12=temp_med12(1:201);
 
 beta=2*pi*frequency*1e9/c0;
-s11=filtered_med11./filtered_air11.*exp(-1i*beta*material_width);
+s11=med11./air11.*exp(-1i*beta*material_width);
 s21=filtered_med21./filtered_air21.*exp(-1i*beta*material_width);
 s12=filtered_med12./filtered_air12.*exp(-1i*beta*material_width);
 freq2 = frequency*1e9;
