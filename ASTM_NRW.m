@@ -6,10 +6,10 @@ mu0=1.2566370614e-6;
 c0=1/sqrt(eps0*mu0);
 eta0=sqrt(mu0/eps0); % free space
 c=1/sqrt(eps0*mu0);
-material_width = 5e-3;
+material_width = 4.74e-3;
 d = material_width;
 %%
-air_file = 'coax60mmCoZn5mm.s2p';
+air_file = 'Coax50mm_0p474mm_CoZn_20p_graphite_6-22.s2p';
 frequency = dlmread(air_file,' ',9,0,[9 0 209 0])/1e9;
 air_mag11 = dlmread(air_file,' ',9,1,[9 1 209 1]);
 air_phase11 = dlmread(air_file,' ',9,2,[9 2 209 2]);
@@ -23,7 +23,7 @@ air11=complex((10.^(air_mag11/20)).*exp(1i*air_phase11/180*pi));
 air21=complex((10.^(air_mag21/20)).*exp(1i*air_phase21/180*pi));
 air12=complex((10.^(air_mag12/20)).*exp(1i*air_phase12/180*pi));
 
-medium_file = 'coax60mmAir.s2p';
+medium_file = 'Coax50mm_air_6-22.s2p';
 %medium_file = 'Calibrated_coax_5mmCoZn-7-28-16.s2p';
 med_mag11 = dlmread(medium_file,' ',9,1,[9 1 209 1]);
 med_phase11 = dlmread(medium_file,' ',9,2,[9 2 209 2]);
