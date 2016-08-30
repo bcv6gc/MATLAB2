@@ -17,7 +17,7 @@ for iy=1:length(frequency)
     mu2 = 1;
     
     n0=1;
-    n1=sqrt(e1);
+    n1=sqrt(e1*mu1);
     n2=1;
     
     th0=0;
