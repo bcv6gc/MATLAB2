@@ -26,11 +26,11 @@ format = 'ReIm';
 % format = 'MagPhs';
 
 %%% set some boundaries to start %%%
-minEr = 3;
-maxEr = 7;
+minEr = 1;
+maxEr = 4;
 minEi = -1;
 maxEi = 5;
-minMr = 0.8;
+minMr = -0.8;
 maxMr = 1.2;
 minMi = -0.1;
 maxMi = 1;
@@ -102,7 +102,7 @@ switch format
         s22 = 10.^(data(:,8)./20).*exp(1j.*data(:,9)./180.*pi);
 end
 %}
-materialFile = 'coax50mmHDPE10mm.s2p';
+materialFile = 'Coax50mm_0p658_CoZn_20p_graphite_6-22.s2p';
 [s11,s21,s12,s22,f] = s2pToComplexSParam(materialFile,filelength);
 a = 1e9;
 [num,~] = size(f);
