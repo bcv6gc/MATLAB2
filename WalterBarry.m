@@ -4,23 +4,24 @@ eps0=8.85418782e-12; % F/m
 mu0=1.2566370614e-6; % H/m
 c0=1/sqrt(eps0*mu0);
 eta0=sqrt(mu0/eps0); % free space
-material_width = 6.6e-3;
-device_length = 7e-3;
+material_width = 10e-3;
+device_length = (50e-3 - material_width)/2;
 epsT = 2.4;%5 + 0.1*1i;
 muT = 1;%2+ 0.1*1i;
 l = device_length;
 t = material_width;
 %%
-airFile = 'Coax75mm_air_6-22.s2p';
+airFile = 'coax50mmAir.s2p';
 filelength = 209;
 [a11,a21,a12,a22,frequency] = s2pToComplexSParam(airFile,filelength);
-a11 = (a11 + a22)/2;
-a21 = (a21 + a12)/2;
-materialFile = 'Coax75mm_10mm_hdpe_6-22.s2p';
+%a11 = (a11 + a22)/2;
+%a21 = (a21 + a12)/2;
+materialFile = 'coax50mmHDPE10mm.s2p';
 [s11,s21,s12,s22,~] = s2pToComplexSParam(materialFile,filelength);
-s11 = (s11 + s22)/2;
-s21 = (s21 + s12)/2;
+%s11 = (s11 + s22)/2;
+%s21 = (s21 + s12)/2;
 %%
+%{
 time_air21=ifft(a21,8000);
 time_med21=ifft(s21,8000);
 [~,c1]=max(abs(time_air21));
@@ -33,8 +34,9 @@ temp_s21=fft(time_s21_filter);
 temp_a21=fft(time_a21_filter);
 filtered_s21=temp_s21(1:201);
 filtered_a21=temp_a21(1:201);
+%}
 %%
-%
+%{
 time_air11=ifft(a11,8000);
 time_med11=ifft(s11,8000);
 [tt,c2]=max(abs(time_med11));
@@ -45,7 +47,7 @@ temp_s11=fft(time_s21_filter);
 temp_a11=fft(time_a11_filter);
 filtered_s11=temp_s11(1:201);
 filtered_a11=temp_a11(1:201);
-
+%}
 %{
 figure(5)
 plot(t_win11*tt,'g--','linewidth',2)
@@ -63,30 +65,41 @@ beta=2*pi*frequency/c0;
 %filtered_s21 = filtered_s21./filtered_a21.*exp(-1i*beta*material_width);
 k0 = 2*pi*frequency/c0;
 arg = (exp(-1i*4*k0*l) + s21.^2 - s11.^2)./(2*exp(-1i*2*k0*l).*s21);
-filt_arg = (exp(-1i*4*k0*l) + filtered_s21.^2 - filtered_s11.^2)./(2*exp(-1i*2*k0*l).*filtered_s21);
-theta = atan(imag(arg + sqrt(arg.^2 - 1))./real(arg + sqrt(arg.^2 - 1)));
-filt_theta = atan(imag(filt_arg + sqrt(filt_arg.^2 - 1))./real(filt_arg + sqrt(filt_arg.^2 - 1)));
-g = sqrt(real(arg + sqrt(arg.^2 - 1)).^2 + imag(arg + sqrt(arg.^2 - 1)).^2);
-filt_g = sqrt(real(filt_arg + sqrt(filt_arg.^2 - 1)).^2 + imag(filt_arg + sqrt(filt_arg.^2 - 1)).^2);
-kt = theta + 1i*g;
-filt_kt = filt_theta + 1i*filt_g;
+%filt_arg = (exp(-1i*4*k0*l) + filtered_s21.^2 - filtered_s11.^2)./(2*exp(-1i*2*k0*l).*filtered_s21);
+%theta = atan(imag(arg + sqrt(arg.^2 - 1))./real(arg + sqrt(arg.^2 - 1)));
+theta = atan2(imag(arg + sqrt(arg.^2 - 1)),real(arg + sqrt(arg.^2 - 1)));
+%filt_theta = atan(imag(filt_arg + sqrt(filt_arg.^2 - 1))./real(filt_arg + sqrt(filt_arg.^2 - 1)));
+%g = sqrt(real(arg + sqrt(arg.^2 - 1)).^2 + imag(arg + sqrt(arg.^2 - 1)).^2);
+g = abs(arg + sqrt(arg.^2 - 1));
+%filt_g = sqrt(real(filt_arg + sqrt(filt_arg.^2 - 1)).^2 + imag(filt_arg + sqrt(filt_arg.^2 - 1)).^2);
+kt = theta + 1i*g; %@@@ made change, not quite sure of
+%kt = acos(arg);
+%%
 theoryKt = k0*sqrt(epsT*muT)*t;
 [theory11,theory12,theory21,theory22] = generateSParamters(epsT,muT,t,frequency);
+%[theory11,theory12] = generateSParamters(epsT,muT,t,frequency);
+t11 = theory11.*exp(-1i*2*k0*l);
+t21 = theory21.*exp(-1i*2*k0*l);
+tArg = (exp(-1i*4*k0*l) + t21.^2 - t11.^2)./(2*exp(-1i*2*k0*l).*t21);
+tTheta = atan2(imag(tArg + sqrt(tArg.^2 - 1)),real(tArg + sqrt(tArg.^2 - 1)));
+tG = abs(tArg + sqrt(tArg.^2 - 1));
+tKt = tTheta + 1i*tG;
+%tKt = acos(tArg);
 %
 figure;
 subplot(211)
-plot(frequency/1e9,abs(s11),frequency/1e9, abs(theory11))%,frequency/1e9, abs(filtered_s11))
+plot(frequency/1e9,angle(s11),frequency/1e9, angle(t11))
 xlabel('Frequency')
 ylabel('Magnitude')
-legend('measured', 'theory')%,'filtered')
+legend('measured', 'theory')
 title('Reflections')
 xlim([1 10])
 grid on
 subplot(212)
-plot(frequency/1e9,abs(s21),frequency/1e9,abs(theory21))%,frequency/1e9,abs(filtered_s21))
+plot(frequency/1e9,angle(s21),frequency/1e9,angle(t21))
 xlabel('Frequency')
 ylabel('Magnitude')
-legend('measured', 'theory')%,'filtered')
+legend('measured', 'theory')
 title('Transmission')
 xlim([1 10])
 grid on
@@ -95,29 +108,42 @@ expanded_R = s11./(exp(-1i*2*k0*l) - s21.*exp(-1i*kt));
 expanded_epsilon = kt./(t*k0).*(1 - expanded_R)./(1 + expanded_R);
 expanded_mu = kt./(t*k0).*(1 + expanded_R)./(1 - expanded_R);
 
-filt_R = filtered_s11./(exp(-1i*2*k0*l) - filtered_s21.*exp(-1i*filt_kt));
-filt_epsilon = filt_kt./(t*k0).*(1 - filt_R)./(1 + filt_R);
-filt_mu = filt_kt./(t*k0).*(1 + filt_R)./(1 - filt_R);
+expanded_Rt = t11./(exp(-1i*2*k0*l) - t21.*exp(-1i*tKt));
+expanded_epsilont = tKt./(t*k0).*(1 - expanded_Rt)./(1 + expanded_Rt);
+expanded_mut = tKt./(t*k0).*(1 + expanded_Rt)./(1 - expanded_Rt);
+
 %%
+%
 figure;
-subplot(311)
-plot(frequency/1e9, real(theoryKt), frequency/1e9, imag(kt))%, frequency/1e9, imag(filt_kt))
+subplot(221)
+plot(frequency/1e9, abs(theoryKt), frequency/1e9, abs(kt), frequency/1e9, abs(tKt))
 xlabel('frequency (GHz)')
 ylabel('Magnitude')
-legend('theory','experiment')%,'filtered')
+legend('theory','experiment','theory derived')
 title('Propagation Constant X material thickness (kt)')
 grid on
-subplot(312)
-plot(frequency/1e9, real(expanded_epsilon), frequency/1e9, imag(expanded_epsilon))%, frequency/1e9, real(filt_epsilon), frequency/1e9, imag(filt_epsilon))
+subplot(222)
+plot(frequency/1e9, abs(expanded_Rt), frequency/1e9, abs(expanded_R))
 xlabel('frequency (GHz)')
 ylabel('Magnitude')
-legend('\epsilon\prime', '\epsilon\prime\prime')%,'filtered \epsilon\prime', 'filtered \epsilon\prime\prime')
+legend('experiment','theory derived')
+title('Reflection Coefficient')
+grid on
+subplot(223)
+plot(frequency/1e9, real(expanded_epsilon), frequency/1e9, imag(expanded_epsilon)...
+    , frequency/1e9, real(expanded_epsilont), frequency/1e9, imag(expanded_epsilont))
+xlabel('frequency (GHz)')
+ylabel('Magnitude')
+legend('\epsilon\prime', '\epsilon\prime\prime','theory \epsilon\prime',...
+    'theory \epsilon\prime\prime')
 title('Permittivity')
 grid on
-subplot(313)
-plot(frequency/1e9, real(expanded_mu), frequency/1e9, imag(expanded_mu))%, frequency/1e9, real(filt_mu), frequency/1e9, imag(filt_mu))
+subplot(224)
+plot(frequency/1e9, real(expanded_mu), frequency/1e9, imag(expanded_mu),...
+    frequency/1e9, real(expanded_mut), frequency/1e9, imag(expanded_mut))
 xlabel('frequency (GHz)')
 ylabel('Magnitude')
-legend('\mu\prime', '\mu\prime\prime')%,'filtered \mu\prime', 'filtered \mu\prime\prime')
+legend('\mu\prime', '\mu\prime\prime','theory \mu\prime', 'theory \mu\prime\prime')
 title('Permeability')
 grid on
+%}
