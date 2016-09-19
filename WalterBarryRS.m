@@ -1,37 +1,31 @@
 % code based on Walter Barry paper for stripline, is effective for coax
 % airlines as well.
-%{
-close all
-clc
-clear
-%}
 eps0=8.85418782e-12; % F/m
 mu0=1.2566370614e-6; % H/m
 c0=1/sqrt(eps0*mu0);
 eta0=sqrt(mu0/eps0); % free space
 material_width = 5e-3;
-device_length = 50e-3;
+device_length = 75e-3;
 epsT = 2.4;%5 + 0.1*1i;
 muT = 1;%2+ 0.1*1i;
-l = (device_length + 8.8e-3 - material_width)/2;
+l = (device_length + 9e-3 - material_width)/2;
 t = material_width;
 %%
 airFile = 'coax_50mm_air_9-15.s2p';
-filelength = 809;
+filelength = 203;
 fftlength = 801;
 %[a11,a21,a12,a22,frequency] = s2pToComplexSParam(airFile,filelength);
 %a11 = (a11 + a22)/2;
 %a21 = (a21 + a12)/2;
-materialFile = 'coax_50mm_HDPE_5mm_9-15.s2p';
-%[s11,s21,s12,s22,frequency] = s2pToComplexSParam_v2(materialFile,filelength);
-[s11,s21,s12,s22,frequency] = s2pToComplexSParam(materialFile,filelength);
+materialFile = 'test12.dat';
+[s11,s21,s12,s22,frequency] = s2pToComplexSParam_v2(materialFile,filelength);
 fudgeFactor = (unwrap(angle(s11)) - unwrap(angle(s22)))/2;
 s11 = s11.*exp(-1i*fudgeFactor);
 s22 = s22.*exp(1i*fudgeFactor);
 s21 = (s21 + s12)/2;
 %%
-beta=2*pi*frequency/c0;
 k0 = 2*pi*frequency/c0;
+beta=2*pi*frequency/c0;
 %{
 time_air21=ifft(a21,8000);
 time_med21=ifft(s21,8000);
@@ -101,7 +95,7 @@ yyaxis left
 plot(frequency/1e9,unwrap(angle(s11)),frequency/1e9, unwrap(angle(t11)))
 ylabel('Phase')
 yyaxis right
-plot(frequency/1e9,(unwrap(angle(s11))- unwrap(angle(t11)))./pi)
+plot(frequency/1e9,(unwrap(angle(s11))- unwrap(angle(t11)))/pi)
 ylim([-2 2])
 xlabel('Frequency')
 ylabel('Offset \pi')
@@ -140,7 +134,6 @@ title('S21 Magnitude')
 %xlim([1 10])
 grid on
 %}
-
 expanded_R = s11./(exp(-1i*2*k0*l) - s21.*exp(-1i*kt));
 expanded_epsilon = kt./(t*k0).*(1 - expanded_R)./(1 + expanded_R);
 expanded_mu = kt./(t*k0).*(1 + expanded_R)./(1 - expanded_R);
@@ -165,7 +158,7 @@ title('Propagation Constant X material thickness (kt)')
 grid on
 subplot(222)
 plot(frequency/1e9, abs(expanded_R), frequency/1e9, abs(expanded_Rt))
-%ylim([0 10])
+ylim([0 10])
 xlabel('frequency (GHz)')
 ylabel('Magnitude')
 legend('experiment','theory derived')
