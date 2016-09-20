@@ -4,11 +4,11 @@ eps0=8.85418782e-12; % F/m
 mu0=1.2566370614e-6; % H/m
 c0=1/sqrt(eps0*mu0);
 eta0=sqrt(mu0/eps0); % free space
-material_width = 5e-3;
-device_length = 75e-3;
-epsT = 2.4;%5 + 0.1*1i;
-muT = 1;%2+ 0.1*1i;
-l = (device_length + 9e-3 - material_width)/2;
+material_width = 1.78e-3;
+device_length = 50e-3;
+epsT = 17 - 0.1*1i;
+muT = 6 - 6i*3;
+l = (device_length + 67.75e-3 - material_width)/2;
 t = material_width;
 %%
 airFile = 'coax_50mm_air_9-15.s2p';
@@ -17,7 +17,7 @@ fftlength = 801;
 %[a11,a21,a12,a22,frequency] = s2pToComplexSParam(airFile,filelength);
 %a11 = (a11 + a22)/2;
 %a21 = (a21 + a12)/2;
-materialFile = 'test12.dat';
+materialFile = 'coax_50mm_dd13490_1p78mm_9-20_RS.dat';
 [s11,s21,s12,s22,frequency] = s2pToComplexSParam_v2(materialFile,filelength);
 fudgeFactor = (unwrap(angle(s11)) - unwrap(angle(s22)))/2;
 s11 = s11.*exp(-1i*fudgeFactor);
@@ -143,7 +143,7 @@ expanded_epsilont = tKt./(t*k0).*(1 - expanded_Rt)./(1 + expanded_Rt);
 expanded_mut = tKt./(t*k0).*(1 + expanded_Rt)./(1 - expanded_Rt);
 
 %%
-%
+%{
 figure;
 subplot(221)
 yyaxis left
@@ -158,7 +158,7 @@ title('Propagation Constant X material thickness (kt)')
 grid on
 subplot(222)
 plot(frequency/1e9, abs(expanded_R), frequency/1e9, abs(expanded_Rt))
-ylim([0 10])
+%ylim([0 10])
 xlabel('frequency (GHz)')
 ylabel('Magnitude')
 legend('experiment','theory derived')
@@ -173,15 +173,36 @@ ylabel('Magnitude')
 legend('\epsilon\prime', '\epsilon\prime\prime','theory \epsilon\prime',...
     'theory \epsilon\prime\prime')
 title('Permittivity')
-ylim([-5 5])
+%ylim([-5 5])
 grid on
 subplot(224)
 plot(frequency/1e9, real(expanded_mu), frequency/1e9, imag(expanded_mu),...
     frequency/1e9, real(expanded_mut), frequency/1e9, imag(expanded_mut))
 xlabel('frequency (GHz)')
 ylabel('Magnitude')
-ylim([-5 5])
+%ylim([-5 5])
 legend('\mu\prime', '\mu\prime\prime','theory \mu\prime', 'theory \mu\prime\prime')
+title('Permeability')
+grid on
+%}
+%
+figure;
+subplot(211)
+plot(frequency/1e9, real(expanded_epsilon), frequency/1e9, imag(expanded_epsilon))
+xlabel('frequency (GHz)')
+ylabel('Magnitude')
+legend('\epsilon\prime', '\epsilon\prime\prime')
+title('Permittivity')
+%ylim([-5 5])
+xlim([1 20])
+grid on
+subplot(212)
+plot(frequency/1e9, real(expanded_mu), frequency/1e9, imag(expanded_mu))
+xlabel('frequency (GHz)')
+ylabel('Magnitude')
+%ylim([-5 5])
+xlim([1 20])
+legend('\mu\prime', '\mu\prime\prime')
 title('Permeability')
 grid on
 %}
