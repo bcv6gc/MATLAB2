@@ -18,14 +18,20 @@ fftlength = 801;
 %a11 = (a11 + a22)/2;
 %a21 = (a21 + a12)/2;
 materialFile = 'coax_50mm_dd13490_1p78mm_9-20_RS.dat';
-[s11,s21,s12,s22,frequency] = s2pToComplexSParam_v2(materialFile,filelength);
+[s11,s21,s12,s22,m_frequency] = s2pToComplexSParam_v2(materialFile,filelength);
 fudgeFactor = (unwrap(angle(s11)) - unwrap(angle(s22)))/2;
 s11 = s11.*exp(-1i*fudgeFactor);
 s22 = s22.*exp(1i*fudgeFactor);
 s21 = (s21 + s12)/2;
 %%
-k0 = 2*pi*frequency/c0;
-beta=2*pi*frequency/c0;
+%Theoretical values
+load(sprintf('%s\\Materials\\dd13490_data.mat',pwd))
+permittivity = rs_real_mittiv - 1i*rs_imag_mittiv;
+permeability = rs_real_meab - 1i*rs_imag_meab;
+[t11,t21] = generateSParamters2(permittivity,permeability,50e-3,1e-2,frequency*1e9);
+%%
+k0 = 2*pi*m_frequency/c0;
+beta=2*pi*m_frequency/c0;
 %{
 time_air21=ifft(a21,8000);
 time_med21=ifft(s21,8000);
@@ -78,12 +84,15 @@ g = abs(arg + sqrt(arg.^2 - 1));
 %kt = theta + 1i*log(g); %@@@ made change, not quite sure of
 kt = acos(arg);
 %%
+%{
 theoryKt = k0*sqrt(epsT*muT)*t;
-[theory11,theory12,theory21,theory22] = generateSParamters(epsT,muT,t,frequency);
+[theory11,theory12,theory21,theory22] = generateSParamters(epsT,muT,t,m_frequency);
 %[theory11,theory12] = generateSParamters(epsT,muT,t,frequency);
 t11 = theory11.*exp(-1i*2*k0*l);
 t21 = theory21.*exp(-1i*2*k0*l);
-tArg = (exp(-1i*4*k0*l) + t21.^2 - t11.^2)./(2*exp(-1i*2*k0*l).*t21);
+%}
+tk0 = 2*pi*frequency/c0;
+tArg = (exp(-1i*4*tk0*l) + t21.^2 - t11.^2)./(2*exp(-1i*2*tk0*l).*t21);
 tTheta = atan2(imag(tArg + sqrt(tArg.^2 - 1)),real(tArg + sqrt(tArg.^2 - 1)));
 tG = abs(tArg + sqrt(tArg.^2 - 1));
 %tKt = tTheta + 1i*tG;
@@ -91,34 +100,34 @@ tKt = acos(tArg);
 %
 figure;
 subplot(221)
-yyaxis left
-plot(frequency/1e9,unwrap(angle(s11)),frequency/1e9, unwrap(angle(t11)))
+%yyaxis left
+plot(m_frequency/1e9,unwrap(angle(s11)),frequency, unwrap(angle(t11)))
 ylabel('Phase')
-yyaxis right
-plot(frequency/1e9,(unwrap(angle(s11))- unwrap(angle(t11)))/pi)
-ylim([-2 2])
+%yyaxis right
+%plot(m_frequency/1e9,(unwrap(angle(s11))- unwrap(angle(t11)))/pi)
+%ylim([-2 2])
 xlabel('Frequency')
-ylabel('Offset \pi')
+%ylabel('Offset \pi')
 legend('measured', 'theory','Location','northeast','Orientation','horizontal')
 title('S11 Phase')
 %xlim([1 10])
 grid on
 subplot(222)
-yyaxis left
-plot(frequency/1e9,unwrap(angle(s21)),frequency/1e9, unwrap(angle(t21)))
+%yyaxis left
+plot(m_frequency/1e9,unwrap(angle(s21)),frequency, unwrap(angle(t21)))
 ylabel('Phase')
-yyaxis right
-plot(frequency/1e9,(unwrap(angle(s21))- unwrap(angle(t21)))/pi)
-ylim([-2 2])
+%yyaxis right
+%plot(m_frequency/1e9,(unwrap(angle(s21))- unwrap(angle(t21)))/pi)
+%ylim([-2 2])
 xlabel('Frequency')
-ylabel('Offset \pi')
+%ylabel('Offset \pi')
 xlabel('Frequency')
 legend('measured', 'theory','Location','northeast','Orientation','horizontal')
 title('S21 Phase')
 %xlim([1 10])
 grid on
 subplot(223)
-plot(frequency/1e9,abs(s11),frequency/1e9, abs(t11))
+plot(m_frequency/1e9,abs(s11),frequency, abs(t11))
 xlabel('Frequency')
 ylabel('Magnitude')
 legend('measured', 'theory','Location','northeast','Orientation','horizontal')
@@ -126,7 +135,7 @@ title('S11 Magnitude')
 %xlim([1 10])
 grid on
 subplot(224)
-plot(frequency/1e9,abs(s21),frequency/1e9, abs(t21))
+plot(m_frequency/1e9,abs(s21),frequency, abs(t21))
 xlabel('Frequency')
 ylabel('Magnitude')
 legend('measured', 'theory','Location','northeast','Orientation','horizontal')
@@ -138,9 +147,9 @@ expanded_R = s11./(exp(-1i*2*k0*l) - s21.*exp(-1i*kt));
 expanded_epsilon = kt./(t*k0).*(1 - expanded_R)./(1 + expanded_R);
 expanded_mu = kt./(t*k0).*(1 + expanded_R)./(1 - expanded_R);
 
-expanded_Rt = t11./(exp(-1i*2*k0*l) - t21.*exp(-1i*tKt));
-expanded_epsilont = tKt./(t*k0).*(1 - expanded_Rt)./(1 + expanded_Rt);
-expanded_mut = tKt./(t*k0).*(1 + expanded_Rt)./(1 - expanded_Rt);
+expanded_Rt = t11./(exp(-1i*2*tk0*l) - t21.*exp(-1i*tKt));
+expanded_epsilont = tKt./(t*tk0).*(1 - expanded_Rt)./(1 + expanded_Rt);
+expanded_mut = tKt./(t*tk0).*(1 + expanded_Rt)./(1 - expanded_Rt);
 
 %%
 %{
@@ -188,7 +197,7 @@ grid on
 %
 figure;
 subplot(211)
-plot(frequency/1e9, real(expanded_epsilon), frequency/1e9, imag(expanded_epsilon))
+plot(m_frequency/1e9, real(expanded_epsilon), m_frequency/1e9, imag(expanded_epsilon))
 xlabel('frequency (GHz)')
 ylabel('Magnitude')
 legend('\epsilon\prime', '\epsilon\prime\prime')
@@ -197,7 +206,7 @@ title('Permittivity')
 xlim([1 20])
 grid on
 subplot(212)
-plot(frequency/1e9, real(expanded_mu), frequency/1e9, imag(expanded_mu))
+plot(m_frequency/1e9, real(expanded_mu), m_frequency/1e9, imag(expanded_mu))
 xlabel('frequency (GHz)')
 ylabel('Magnitude')
 %ylim([-5 5])
