@@ -9,45 +9,39 @@ eps0=8.85418782e-12; % F/m
 mu0=1.2566370614e-6; % H/m
 c0=1/sqrt(eps0*mu0);
 eta0=sqrt(mu0/eps0); % free space
-material_width = 5e-3;
+material_width = 1.87e-3;
 device_length = 50e-3;
 connector_length = 0;
 %connector_length = -8.5e-3;
 l = (device_length + connector_length - material_width)/2;
 t = material_width;
 %%
-airFile = 'coax_50mm_air_9-23_ag.s2p';
-filelength = 809;
+airFile = 'coax_50mm_air_9-15.s2p';
+filelength = 203;
 fftlength = 801;
-[a11,a21,a12,a22,air_frequency] = s2pToComplexSParam(airFile,filelength);
-%a11 = (a11 + a22)/2;
-%a21 = (a21 + a12)/2;
-materialFile = 'coax_50mm_HDPE_5mm_9-23_ag.s2p';
-%[s11,s21,s12,s22,frequency] = s2pToComplexSParam_v2(materialFile,filelength);
-[s11,s21,s12,s22,m_frequency] = s2pToComplexSParam(materialFile,filelength);
-fudgeFactor = (unwrap(angle(s11)) - unwrap(angle(s22)))/2 - pi;
-% @@@ if initially greater than pi/2 subtract by pi
+[a11,a21,a12,a22,frequency] = s2pToComplexSParam(airFile,filelength);
+materialFile = 'coax_50mm_dd13490_1p78mm_9-20_RS.dat';
+[s11,s21,s12,s22,m_frequency] = s2pToComplexSParam_v2(materialFile,filelength);
+fudgeFactor = (unwrap(angle(s11)) - unwrap(angle(s22)))/2;
 s11 = s11.*exp(-1i*fudgeFactor);
 s22 = s22.*exp(1i*fudgeFactor);
 s21 = (s21 + s12)/2;
 %%
 %frequency dependent case
-%%
-%{
+%
 load(sprintf('%s\\Materials\\dd13490_data.mat',pwd))
 permittivity = real_mittiv - 1i*imag_mittiv;
 permeability = real_meab - 1i*imag_meab;
 t_frequency = frequency*1e9;
 [t11,t21] = generateSParamters2(permittivity,permeability,device_length,material_width,t_frequency);
-%}
 %static case
-%
+%{
 epsT = 2.4;
 permittivity = epsT;
 muT = 1;
 permeability = muT;
 t_frequency = m_frequency;
-[t11,t21] = generateSParamters2(epsT,muT,device_length,material_width,t_frequency);
+%[theory11,theory12] = generateSParamters2(epsT,muT,device_length,material_width,t_frequency);
 %}
 %%
 beta=2*pi*m_frequency/c0;
