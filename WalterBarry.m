@@ -11,9 +11,9 @@ c0=1/sqrt(eps0*mu0);
 eta0=sqrt(mu0/eps0); % free space
 material_width = 5e-3;
 device_length = 50e-3;
-connector_length = 0;
+connector_length = 8.9e-3;
 %connector_length = -8.5e-3;
-l = (device_length + connector_length - material_width)/2;
+l = (device_length - connector_length - material_width)/2;
 t = material_width;
 %%
 airFile = 'coax_50mm_air_9-23_ag.s2p';
@@ -22,7 +22,7 @@ fftlength = 801;
 [a11,a21,a12,a22,air_frequency] = s2pToComplexSParam(airFile,filelength);
 %a11 = (a11 + a22)/2;
 %a21 = (a21 + a12)/2;
-materialFile = 'coax_50mm_HDPE_5mm_9-23_ag.s2p';
+materialFile = '50mm_coax_5mm_HDPE_10-5.s2p';
 %[s11,s21,s12,s22,frequency] = s2pToComplexSParam_v2(materialFile,filelength);
 [s11,s21,s12,s22,m_frequency] = s2pToComplexSParam(materialFile,filelength);
 fudgeFactor = (unwrap(angle(s11)) - unwrap(angle(s22)))/2 - pi;
@@ -109,10 +109,10 @@ yyaxis left
 plot(m_frequency/1e9,unwrap(angle(s11)),t_frequency/1e9, unwrap(angle(t11)))
 ylabel('Phase')
 yyaxis right
-plot(m_frequency(2:end)/1e9,diff(unwrap(angle(s11))),t_frequency(2:end)/1e9, diff(unwrap(angle(t11))))
-%ylim([-2 2])
+plot(m_frequency/1e9,unwrap(angle(s11))./k0,t_frequency/1e9, unwrap(angle(t11))./k0)
+%ylim([-0.1 -.05])
 xlabel('Frequency')
-%ylabel('Offset \pi')
+ylabel('phase/k0')
 legend('measured', 'theory','Location','northeast','Orientation','horizontal')
 title('S11 Phase')
 %xlim([1 10])
@@ -122,10 +122,10 @@ yyaxis left
 plot(m_frequency/1e9,unwrap(angle(s21)),t_frequency/1e9, unwrap(angle(t21)))
 ylabel('Phase')
 yyaxis right
-plot(m_frequency(2:end)/1e9,diff(unwrap(angle(s21))),t_frequency(2:end)/1e9, diff(unwrap(angle(t21))))
-%ylim([-2 2])
+plot(m_frequency/1e9,unwrap(angle(s21))./k0,t_frequency/1e9, unwrap(angle(t21))./k0)
+%ylim([-0.07 -.05])
 xlabel('Frequency')
-%ylabel('Offset \pi')
+ylabel('phase/k0')
 xlabel('Frequency')
 legend('measured', 'theory','Location','northeast','Orientation','horizontal')
 title('S21 Phase')
