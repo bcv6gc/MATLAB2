@@ -1,0 +1,17 @@
+14.03.2014, Miloslav Macko
+	Version 1.2.0 - fit to Application note version 9e
+	- Added scripts for custom R&S mdd drivers
+		- CUSTOM_rsnrpz_TMTOOL_example.m
+		- CUSTOM_rsspecan_TMTOOL_Complex_example.m
+
+27.02.2014, Miloslav Macko
+	Version 1.1.0 - fit to Application note version 8e
+	- Added scripts for NRP-Z powersensors driver rsnrpz:
+		- rsnrpz_TMtool_example.m script for matlab_rsnrpz_driver.mdd
+		- rsnrpz_calllib_example_64bit.m script using rsnrpz_64.dll instrument driver
+		- rsnrpz_calllib_example_32bit.m script using rsnrpz_32.dll instrument driver
+
+
+24.02.2014, Miloslav Macko
+	Version 1.0.0 - Initial release for app note 7e
+	- Scripts removed from application note and put to extra file
