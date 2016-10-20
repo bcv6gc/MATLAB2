@@ -9,7 +9,7 @@ eps0=8.85418782e-12; % F/m
 mu0=1.2566370614e-6; % H/m
 c0=1/sqrt(eps0*mu0);
 eta0=sqrt(mu0/eps0); % free space
-material_width = 5e-3;
+material_width = 1.5e-3;
 device_length = 50e-3;
 %%
 % use airfile to calibrate the phase and account for connectors
@@ -23,7 +23,7 @@ theory_l = (device_length - material_width)/2;
 t = material_width;
 %%
 % get material file and correct for placement in the device
-materialFile = '50mm_coax_5mm_hdpe_10_6.dat';
+materialFile = '50mm_coax_1p87mm_ECCOSORB_10_6.dat';
 [s11,s21,s12,s22,m_frequency] = s2pToComplexSParam_v2(materialFile,filelength);
 fudgeFactor = (unwrap(angle(s11)) - unwrap(angle(s22)))/2;
 s11 = s11.*exp(-1i*fudgeFactor);
@@ -32,8 +32,8 @@ s21 = (s21 + s12)/2;
 %%
 %frequency dependent case
 %%
-%{
-load(sprintf('%s\\Materials\\dd13490_data.mat',pwd))
+%
+load(sprintf('%s\\Materials\\eccosorb_data.mat',pwd))
 permittivity = real_mittiv - 1i*imag_mittiv;
 permeability = real_meab - 1i*imag_meab;
 t_frequency = frequency*1e9;
@@ -41,7 +41,7 @@ t_frequency = frequency*1e9;
 %}
 %static case
 %%
-%
+%{
 epsT = 2.4;
 permittivity = epsT;
 muT = 1;
@@ -189,14 +189,14 @@ ylabel('Magnitude')
 legend('\epsilon\prime', '\epsilon\prime\prime','theory \epsilon\prime',...
     'theory \epsilon\prime\prime','Location','east')
 title('Permittivity')
-ylim([-5 20])
+%ylim([-5 20])
 grid on
 subplot(224)
 plot(m_frequency/1e9, real(mu), m_frequency/1e9, imag(mu),...
     t_frequency/1e9, real(mut), t_frequency/1e9, imag(mut))
 xlabel('frequency (GHz)')
 ylabel('Magnitude')
-ylim([-5 10])
+%ylim([-5 10])
 legend('\mu\prime', '\mu\prime\prime','theory \mu\prime', 'theory \mu\prime\prime')
 title('Permeability')
 grid on
