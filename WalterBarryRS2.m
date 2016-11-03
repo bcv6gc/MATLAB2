@@ -11,21 +11,22 @@ c0=1/sqrt(eps0*mu0);
 eta0=sqrt(mu0/eps0); % free space
 %%
 % Data inputs
-airFile = 'coax_50mm_air_10-19.dat';
-materialFile = '50mm_coax_paraffin-wax_3.53mm_10-26.dat';
-filename = 'SB-1007_data';
-material_width = 3.53e-3;
-material = 'Wax';
-device_length = 50e-3;
+airFile = 'stripline_air_11-3.dat';
+materialFile = 'stripline_QR-13AF_9p73mm_11-3.dat';
+filename = 'QR-13AF_data';
+material_width = 9.73e-3/2.4;
+material = 'QR-13AF';
+device_length = 120e-3;
+%device_length = 50e-3;
 %%
 % use airfile to calibrate the phase and account for connectors
 
-filelength = 1003;
-%filelength = 203;
+%filelength = 1003;
+filelength = 303;
 [a11,a21,a12,a22,a_frequency] = s2pToComplexSParam_v2(airFile,filelength);
 ak0 = 2*pi*a_frequency/c0;
-%correction_length = device_length + median(unwrap(angle(a21))./ak0);
-correction_length = -0.068;
+correction_length = device_length + median(unwrap(angle(a21))./ak0);
+%correction_length = -0.068;
 l = (device_length - correction_length - material_width)/2;
 theory_l = (device_length - material_width)/2;
 t = material_width;
@@ -51,7 +52,7 @@ t_frequency = frequency*1e9;
 [t11,t21] = generateSParamters2(permittivity,permeability,device_length,material_width,t_frequency);
 %}
 %%
-%{
+%
 data = xlsread(sprintf('%s\\Materials\\%s.xlsx',pwd,filename),'Sheet1');
 t_frequency = data(:,1)*1e9;
 permittivity = data(:,2) - 1i*data(:,3);
@@ -60,8 +61,8 @@ permeability = data(:,4) - 1i*data(:,5);
 %}
 %static case
 %%
-%
-epsT = 2.1;
+%{
+epsT = 2.4;
 permittivity = epsT;
 muT = 1;
 permeability = muT;
