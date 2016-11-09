@@ -11,13 +11,13 @@ c0=1/sqrt(eps0*mu0);
 eta0=sqrt(mu0/eps0); % free space
 %%
 % Data inputs
-airFile = 'stripline_air_11-3.dat';
-materialFile = 'stripline_QR-13AF_9p73mm_11-3.dat';
-filename = 'QR-13AF_data';
-material_width = 9.73e-3/2.4;
-material = 'QR-13AF';
-device_length = 120e-3;
-%device_length = 50e-3;
+airFile = 'coax_50mm_air_11-7.dat';
+materialFile = 'coax_50mm_HDPE_5.10mm_11-7.dat';
+filename = 'ECCOSORB_MCS_data';
+material_width = 5.1e-3;
+material = 'HDPE';
+%device_length = 120e-3;
+device_length = 50e-3;
 %%
 % use airfile to calibrate the phase and account for connectors
 
@@ -36,6 +36,13 @@ t = material_width;
 %materialFile = '50mm_coax_5mm_hdpe_10_6.dat';
 [s11,s21,s12,s22,m_frequency] = s2pToComplexSParam_v2(materialFile,filelength);
 fudgeFactor = (unwrap(angle(s11)) - unwrap(angle(s22)))/2;
+if (mean(fudgeFactor) > pi)
+    if (mean(unwrap(angle(s11))) > mean(unwrap(angle(s22))))
+        fudgeFactor = (unwrap(angle(s11)) - 2*pi - unwrap(angle(s22)))/2;
+    elseif(mean(unwrap(angle(s22))) > mean(unwrap(angle(s11))))
+        fudgeFactor = (unwrap(angle(s11)) - unwrap(angle(s22)) + 2*pi)/2;
+    end
+end
 %s11 = s11.*exp(-1i*fudgeFactor - 1i*pi);
 s11 = s11.*exp(-1i*fudgeFactor);
 s22 = s22.*exp(1i*fudgeFactor);
@@ -52,7 +59,7 @@ t_frequency = frequency*1e9;
 [t11,t21] = generateSParamters2(permittivity,permeability,device_length,material_width,t_frequency);
 %}
 %%
-%
+%{
 data = xlsread(sprintf('%s\\Materials\\%s.xlsx',pwd,filename),'Sheet1');
 t_frequency = data(:,1)*1e9;
 permittivity = data(:,2) - 1i*data(:,3);
@@ -61,7 +68,7 @@ permeability = data(:,4) - 1i*data(:,5);
 %}
 %static case
 %%
-%{
+%
 epsT = 2.4;
 permittivity = epsT;
 muT = 1;
@@ -134,7 +141,7 @@ ylabel('Offset (m)')
 xlabel('Frequency')
 %ylabel('Offset \pi')
 %legend('measured', 'theory','Location','northeast','Orientation','horizontal')
-title(sprintf('%s (%0.2e mm width) S11 Phase',material,material_width))
+title(sprintf('%s (%0.2g mm width) S11 Phase',material,material_width*1e3))
 %xlim([1 10])
 grid on
 subplot(222)
@@ -150,7 +157,7 @@ xlabel('Frequency')
 xlabel('Frequency')
 legend('measured', 'theory','Location','best')%,'Orientation','horizontal')
 legend('boxoff')
-title(sprintf('%s (%0.2e mm width) S21 Phase',material,material_width))
+title(sprintf('%s (%0.2g mm width) S21 Phase',material,material_width*1e3))
 %xlim([1 10])
 grid on
 subplot(223)
@@ -159,7 +166,7 @@ xlabel('Frequency')
 ylabel('Magnitude')
 legend('measured', 'theory','Location','best')%,'Orientation','horizontal')
 legend('boxoff')
-title(sprintf('%s (%0.2e mm width) S11 Magnitude',material,material_width))
+title(sprintf('%s (%0.2g mm width) S11 Magnitude',material,material_width*1e3))
 %xlim([1 10])
 grid on
 subplot(224)
@@ -168,7 +175,7 @@ xlabel('Frequency')
 ylabel('Magnitude')
 legend('measured', 'theory','Location','best')%,'Orientation','horizontal')
 legend('boxoff')
-title(sprintf('%s (%0.2e mm width) S21 Magnitude',material,material_width))
+title(sprintf('%s (%0.2g mm width) S21 Magnitude',material,material_width*1e3))
 %xlim([1 10])
 grid on
 %tightfig;
@@ -195,7 +202,7 @@ xlabel('Frequency (GHz)')
 ylabel('Phase')
 legend('theory','experiment','Location','best')
 legend('boxoff')
-title(sprintf('%s (%0.2e mm width) kt',material,material_width))
+title(sprintf('%s (%0.2g mm width) kt',material,material_width*1e3))
 %title('Propagation Constant X material thickness (kt)')
 grid on
 subplot(222)
@@ -205,7 +212,7 @@ xlabel('Frequency (GHz)')
 ylabel('Magnitude')
 legend('experiment','theory derived','Location','best')
 legend('boxoff')
-title(sprintf('%s (%0.2e mm width) Reflection Coeff.',material,material_width))
+title(sprintf('%s (%0.2g mm width) Reflection Coeff.',material,material_width*1e3))
 %title('Reflection Coefficient')
 ylim([-1 1])
 grid on
@@ -217,7 +224,7 @@ ylabel('Magnitude')
 legend('\epsilon\prime', '\epsilon\prime\prime','theory \epsilon\prime',...
     'theory \epsilon\prime\prime')
 legend('boxoff')
-title(sprintf('%s (%0.2e mm width) Permittivity',material,material_width))
+title(sprintf('%s (%0.2g mm width) Permittivity',material,material_width*1e3))
 %title('Permittivity')
 ylim([1.5*min(min(real(epsilont)),min(imag(epsilont)))-0.5 1.5*max(max(real(epsilont)),max(imag(epsilont)))+ 0.5])
 grid on
@@ -229,7 +236,7 @@ ylabel('Magnitude')
 ylim([1.5*min(min(real(mut)),min(imag(mut)))- 0.5 1.5*max(max(real(mut)),max(imag(mut))) + 0.5])
 legend('\mu\prime', '\mu\prime\prime','theory \mu\prime', 'theory \mu\prime\prime')
 legend('boxoff')
-title(sprintf('%s (%0.2e mm width) Permeability',material,material_width))
+title(sprintf('%s (%0.2g mm width) Permeability',material,material_width*1e3))
 %title('Permeability')
 grid on
 
