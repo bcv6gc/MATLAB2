@@ -20,13 +20,10 @@ material = 'HDPE';
 device_length = 50e-3;
 %%
 % use airfile to calibrate the phase and account for connectors
-
-%filelength = 1003;
 filelength = 303;
 [a11,a21,a12,a22,a_frequency] = s2pToComplexSParam_v2(airFile,filelength);
 ak0 = 2*pi*a_frequency/c0;
 correction_length = device_length + median(unwrap(angle(a21))./ak0);
-%correction_length = -0.068;
 l = (device_length - correction_length - material_width)/2;
 theory_l = (device_length - material_width)/2;
 t = material_width;
@@ -36,11 +33,13 @@ t = material_width;
 %materialFile = '50mm_coax_5mm_hdpe_10_6.dat';
 [s11,s21,s12,s22,m_frequency] = s2pToComplexSParam_v2(materialFile,filelength);
 fudgeFactor = (unwrap(angle(s11)) - unwrap(angle(s22)))/2;
-if (mean(fudgeFactor) > pi)
+meanFudge = mean(fudgeFactor);
+if (meanFudge > pi)
+    n = floor(meanFudge/pi);
     if (mean(unwrap(angle(s11))) > mean(unwrap(angle(s22))))
-        fudgeFactor = (unwrap(angle(s11)) - 2*pi - unwrap(angle(s22)))/2;
+        fudgeFactor = (unwrap(angle(s11)) - 2*n*pi - unwrap(angle(s22)))/2;
     elseif(mean(unwrap(angle(s22))) > mean(unwrap(angle(s11))))
-        fudgeFactor = (unwrap(angle(s11)) - unwrap(angle(s22)) + 2*pi)/2;
+        fudgeFactor = (unwrap(angle(s11)) - unwrap(angle(s22)) + 2*n*pi)/2;
     end
 end
 %s11 = s11.*exp(-1i*fudgeFactor - 1i*pi);
