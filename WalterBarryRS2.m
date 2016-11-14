@@ -12,10 +12,10 @@ eta0=sqrt(mu0/eps0); % free space
 %%
 % Data inputs
 airFile = 'coax_50mm_air_11-7.dat';
-materialFile = 'coax_50mm_HDPE_5.10mm_11-7.dat';
-filename = 'ECCOSORB_MCS_data';
-material_width = 5.1e-3;
-material = 'HDPE';
+materialFile = 'coax_50mm_100%paraffin-wax_6.44mm_11-7.dat';
+filename = 'DD-13490_data';
+material_width = 6.44e-3;
+material = 'Wax';
 %device_length = 120e-3;
 device_length = 50e-3;
 %%
@@ -35,7 +35,7 @@ t = material_width;
 fudgeFactor = (unwrap(angle(s11)) - unwrap(angle(s22)))/2;
 meanFudge = mean(fudgeFactor);
 if (meanFudge > pi)
-    n = floor(meanFudge/pi);
+    n = floor(meanFudge/pi)
     if (mean(unwrap(angle(s11))) > mean(unwrap(angle(s22))))
         fudgeFactor = (unwrap(angle(s11)) - 2*n*pi - unwrap(angle(s22)))/2;
     elseif(mean(unwrap(angle(s22))) > mean(unwrap(angle(s11))))
@@ -68,7 +68,7 @@ permeability = data(:,4) - 1i*data(:,5);
 %static case
 %%
 %
-epsT = 2.4;
+epsT = 2.1;
 permittivity = epsT;
 muT = 1;
 permeability = muT;
