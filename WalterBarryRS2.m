@@ -9,22 +9,29 @@ eps0=8.85418782e-12; % F/m
 mu0=1.2566370614e-6; % H/m
 c0=1/sqrt(eps0*mu0);
 eta0=sqrt(mu0/eps0); % free space
-material_width = 1.23e-3;
-material = 'SB-1007';
+%%
+% Data inputs
+airFile = 'coax_50mm_air_10-19.dat';
+materialFile = '50mm_coax_paraffin-wax_3.53mm_10-26.dat';
+filename = 'SB-1007_data';
+material_width = 3.53e-3;
+material = 'Wax';
 device_length = 50e-3;
 %%
 % use airfile to calibrate the phase and account for connectors
-airFile = 'coax_50mm_air_10-19.dat';
+
 filelength = 1003;
+%filelength = 203;
 [a11,a21,a12,a22,a_frequency] = s2pToComplexSParam_v2(airFile,filelength);
 ak0 = 2*pi*a_frequency/c0;
-correction_length = device_length + median(unwrap(angle(a21))./ak0);
+%correction_length = device_length + median(unwrap(angle(a21))./ak0);
+correction_length = -0.068;
 l = (device_length - correction_length - material_width)/2;
 theory_l = (device_length - material_width)/2;
 t = material_width;
 %%
 % get material file and correct for placement in the device
-materialFile = 'coax_50mm_SB1007_1.23mm_10-19.dat';
+
 %materialFile = '50mm_coax_5mm_hdpe_10_6.dat';
 [s11,s21,s12,s22,m_frequency] = s2pToComplexSParam_v2(materialFile,filelength);
 fudgeFactor = (unwrap(angle(s11)) - unwrap(angle(s22)))/2;
@@ -43,8 +50,8 @@ permeability = real_meab - 1i*imag_meab;
 t_frequency = frequency*1e9;
 [t11,t21] = generateSParamters2(permittivity,permeability,device_length,material_width,t_frequency);
 %}
-%
-filename = 'DD-13490_data';
+%%
+%{
 data = xlsread(sprintf('%s\\Materials\\%s.xlsx',pwd,filename),'Sheet1');
 t_frequency = data(:,1)*1e9;
 permittivity = data(:,2) - 1i*data(:,3);
@@ -53,8 +60,8 @@ permeability = data(:,4) - 1i*data(:,5);
 %}
 %static case
 %%
-%{
-epsT = 2.4;
+%
+epsT = 2.1;
 permittivity = epsT;
 muT = 1;
 permeability = muT;
@@ -140,7 +147,8 @@ ylabel('Offset (m)')
 xlabel('Frequency')
 %ylabel('Offset \pi')
 xlabel('Frequency')
-legend('measured', 'theory','Location','northeast','Orientation','horizontal')
+legend('measured', 'theory','Location','best')%,'Orientation','horizontal')
+legend('boxoff')
 title(sprintf('%s (%0.2e mm width) S21 Phase',material,material_width))
 %xlim([1 10])
 grid on
@@ -148,7 +156,8 @@ subplot(223)
 plot(m_frequency/1e9,abs(s11),t_frequency/1e9, abs(t11))
 xlabel('Frequency')
 ylabel('Magnitude')
-legend('measured', 'theory','Location','southeast','Orientation','horizontal')
+legend('measured', 'theory','Location','best')%,'Orientation','horizontal')
+legend('boxoff')
 title(sprintf('%s (%0.2e mm width) S11 Magnitude',material,material_width))
 %xlim([1 10])
 grid on
@@ -156,10 +165,12 @@ subplot(224)
 plot(m_frequency/1e9,abs(s21),t_frequency/1e9, abs(t21))
 xlabel('Frequency')
 ylabel('Magnitude')
-legend('measured', 'theory','Location','northeast','Orientation','horizontal')
+legend('measured', 'theory','Location','best')%,'Orientation','horizontal')
+legend('boxoff')
 title(sprintf('%s (%0.2e mm width) S21 Magnitude',material,material_width))
 %xlim([1 10])
 grid on
+%tightfig;
 %}
 
 R = s11./(exp(-1i*2*k0*l) - s21.*exp(-1i*kt));
@@ -179,41 +190,46 @@ plot(t_frequency/1e9, abs(theoryKt), m_frequency/1e9, abs(kt))%, t_frequency/1e9
 ylabel('Magnitude')
 yyaxis right
 plot(t_frequency/1e9, angle(theoryKt), m_frequency/1e9, angle(kt))%, t_frequency/1e9, angle(tKt))
-xlabel('frequency (GHz)')
+xlabel('Frequency (GHz)')
 ylabel('Phase')
-legend('theory','experiment','Location','east')
+legend('theory','experiment','Location','best')
+legend('boxoff')
 title(sprintf('%s (%0.2e mm width) kt',material,material_width))
 %title('Propagation Constant X material thickness (kt)')
 grid on
 subplot(222)
 plot(m_frequency/1e9, real(R), t_frequency/1e9, real(Rt))
 %ylim([0 10])
-xlabel('frequency (GHz)')
+xlabel('Frequency (GHz)')
 ylabel('Magnitude')
-legend('experiment','theory derived','Location','southeast')
-title(sprintf('%s (%0.2e mm width) Reflection Coefficient',material,material_width))
+legend('experiment','theory derived','Location','best')
+legend('boxoff')
+title(sprintf('%s (%0.2e mm width) Reflection Coeff.',material,material_width))
 %title('Reflection Coefficient')
-%ylim([0 5])
+ylim([-1 1])
 grid on
 subplot(223)
 plot(m_frequency/1e9, real(epsilon), m_frequency/1e9, imag(epsilon)...
     , t_frequency/1e9, real(epsilont), t_frequency/1e9, imag(epsilont))
-xlabel('frequency (GHz)')
+xlabel('Frequency (GHz)')
 ylabel('Magnitude')
 legend('\epsilon\prime', '\epsilon\prime\prime','theory \epsilon\prime',...
     'theory \epsilon\prime\prime')
+legend('boxoff')
 title(sprintf('%s (%0.2e mm width) Permittivity',material,material_width))
 %title('Permittivity')
-ylim([1.5*min(min(real(epsilont)),min(imag(epsilont))) 1.5*max(max(real(epsilont)),max(imag(epsilont)))])
+ylim([1.5*min(min(real(epsilont)),min(imag(epsilont)))-0.5 1.5*max(max(real(epsilont)),max(imag(epsilont)))+ 0.5])
 grid on
 subplot(224)
 plot(m_frequency/1e9, real(mu), m_frequency/1e9, imag(mu),...
     t_frequency/1e9, real(mut), t_frequency/1e9, imag(mut))
-xlabel('frequency (GHz)')
+xlabel('Frequency (GHz)')
 ylabel('Magnitude')
-ylim([1.5*min(min(real(mut)),min(imag(mut))) 1.5*max(max(real(mut)),max(imag(mut)))])
+ylim([1.5*min(min(real(mut)),min(imag(mut)))- 0.5 1.5*max(max(real(mut)),max(imag(mut))) + 0.5])
 legend('\mu\prime', '\mu\prime\prime','theory \mu\prime', 'theory \mu\prime\prime')
+legend('boxoff')
 title(sprintf('%s (%0.2e mm width) Permeability',material,material_width))
 %title('Permeability')
 grid on
+
 %}
