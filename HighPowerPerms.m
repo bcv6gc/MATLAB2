@@ -1,4 +1,4 @@
-function results = CalculatePerms(device,material,material_width,airFile,materialFile,plots)
+function results = HighPowerPerms(device,material,material_width,airFile,materialFile,plots)
 % constants
 eps0=8.85418782e-12; % F/m
 mu0=1.2566370614e-6; % H/m
@@ -17,7 +17,7 @@ if strcmpi(plots,'all')
 end
 %%
 % Use air measurements to correct offset from connectors
-[a11,a21,a12,a22,a_frequency] = s2pToComplexSParam_v3(airFile);
+[a11,a21,a_frequency] = s2pToComplexSParam_v4(airFile);
 ak0 = 2*pi*a_frequency/c0;
 correction_length = device_length + median(unwrap(angle(a21))./ak0);
 l = (device_length - correction_length - material_width)/2;
@@ -25,21 +25,8 @@ theory_l = (device_length - material_width)/2;
 t = material_width;
 %%
 % Get material data, electrically center the material in the device
-[s11,s21,s12,s22,m_frequency] = s2pToComplexSParam_v3(materialFile);
-fudgeFactor = (unwrap(angle(s11)) - unwrap(angle(s22)))/2;
-meanFudge = mean(fudgeFactor);
-if (meanFudge > pi)
-    n = floor(meanFudge/pi);
-    if (mean(unwrap(angle(s11))) > mean(unwrap(angle(s22))))
-        fudgeFactor = (unwrap(angle(s11)) - 2*n*pi - unwrap(angle(s22)))/2;
-    elseif(mean(unwrap(angle(s22))) > mean(unwrap(angle(s11))))
-        fudgeFactor = (unwrap(angle(s11)) - unwrap(angle(s22)) + 2*n*pi)/2;
-    end
-end
-s11 = s11.*exp(-1i*fudgeFactor);
-s22 = s22.*exp(1i*fudgeFactor);
-s11 = (s11 + s22)/2;
-s21 = (s21 + s12)/2;
+[s11,s21,m_frequency] = s2pToComplexSParam_v4(materialFile);
+
 %%
 % load material file if it exists
 matfiles = dir(sprintf('%s\\Materials\\%s*.dat',pwd));
@@ -95,7 +82,7 @@ if any(strcmpi(plots,'params'))
     ylabel('Phase')
     yyaxis right
     plot(m_frequency/1e9,unwrap(angle(s11))./k0 - correction_length + device_length)
-    ylim([-0.2 0.2])
+    %ylim([-0.2 0.2])
     ylabel('Offset (m)')
     xlabel('Frequency')
     title(sprintf('%s (%0.2g mm width) S11 Phase',material,material_width*1e3))
@@ -106,7 +93,7 @@ if any(strcmpi(plots,'params'))
     ylabel('Phase')
     yyaxis right
     plot(m_frequency/1e9,unwrap(angle(s21))./k0 - correction_length + device_length)
-    ylim([-0.01 0])
+    %ylim([-0.01 0])
     ylabel('Offset (m)')
     xlabel('Frequency')
     xlabel('Frequency')
