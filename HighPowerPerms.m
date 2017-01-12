@@ -13,7 +13,7 @@ switch device
 end
 %%
 if strcmpi(plots,'all')
-    plots = {'perms','params'};
+    plots = {'perms','params','debug'};
 end
 %%
 % Use air measurements to correct offset from connectors
@@ -26,7 +26,8 @@ t = material_width;
 %%
 % Get material data, electrically center the material in the device
 [s11,s21,m_frequency] = s2pToComplexSParam_v4(materialFile);
-
+s11 = s11*1e-5; % correction for 50 dB offset
+%@@ need to correct the phase for S11
 %%
 % load material file if it exists
 matfiles = dir(sprintf('%s\\Materials\\%s*.dat',pwd));
@@ -51,6 +52,10 @@ else
     t_frequency = m_frequency;
 end
 %%
+%correct the phase of S11 compared to what is expected
+test = unwrap(angle(t11)) - unwrap(angle(s11));
+s11 = s11.*exp(-1i*test);
+%%
 %calculate some values
 k0 = 2*pi*m_frequency/c0;
 tk0 = 2*pi*t_frequency/c0;
@@ -74,6 +79,48 @@ if ~isempty(permittivity)
     results.epsilont = tKt./(t*tk0).*(1 - Rt)./(1 + Rt);
     results.mut = tKt./(t*tk0).*(1 + Rt)./(1 - Rt);
 end
+%%
+if any(strcmpi(plots,'debug'))
+    subplot(221)
+    yyaxis left
+    plot(m_frequency/1e9,unwrap(angle(t11)))
+    ylabel('Theory Phase')
+    yyaxis right
+    plot(m_frequency/1e9,unwrap(angle(s11)))
+    ylabel('Measured Phase')
+    xlabel('Frequency')
+    title(sprintf('%s (%0.2g mm width) S11 Phase',material,material_width*1e3))
+    grid on
+    subplot(222)
+    yyaxis left
+    plot(m_frequency/1e9,unwrap(angle(s11))- correction_length.*k0)
+    ylabel('Phase')
+    yyaxis right
+    plot(m_frequency/1e9,unwrap(angle(s11))./k0 - correction_length + device_length)
+    ylabel('Offset (m)')
+    xlabel('Frequency')
+    %legend('measured', 'theory','Location','best')%,'Orientation','horizontal')
+    legend('boxoff')
+    title(sprintf('%s (%0.2g mm width) S21 Phase',material,material_width*1e3))
+    grid on
+    subplot(223)
+    plot(m_frequency/1e9,abs(t11) ,m_frequency/1e9, abs(s11))
+    xlabel('Frequency')
+    ylabel('Magnitude')
+    legend('theory','measured','Location','best')%,'Orientation','horizontal')
+    legend('boxoff')
+    title(sprintf('%s (%0.2g mm width) S11 Magnitude',material,material_width*1e3))
+    grid on
+    subplot(224)
+    plot(m_frequency/1e9,abs(t21) ,m_frequency/1e9, abs(s21))
+    xlabel('Frequency')
+    ylabel('Magnitude')
+    legend('theory','measured','Location','best')%,'Orientation','horizontal')
+    legend('boxoff')
+    title(sprintf('%s (%0.2g mm width) S21 Magnitude',material,material_width*1e3))
+    grid on
+end
+%%
 if any(strcmpi(plots,'params'))
     figure;
     subplot(221)
