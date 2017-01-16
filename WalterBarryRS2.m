@@ -35,7 +35,7 @@ t = material_width;
 fudgeFactor = (unwrap(angle(s11)) - unwrap(angle(s22)))/2;
 meanFudge = mean(fudgeFactor);
 if (meanFudge > pi)
-    n = floor(meanFudge/pi)
+    n = floor(meanFudge/pi);
     if (mean(unwrap(angle(s11))) > mean(unwrap(angle(s22))))
         fudgeFactor = (unwrap(angle(s11)) - 2*n*pi - unwrap(angle(s22)))/2;
     elseif(mean(unwrap(angle(s22))) > mean(unwrap(angle(s11))))
