@@ -27,8 +27,8 @@ t = material_width;
 % Get material data, electrically center the material in the device
 [s11,s21,~] = s2pToComplexSParam_v4(materialFile);
 [s22,s12,m_frequency] = s2pToComplexSParam_v4(materialFile2);
-s11 = abs(s11)*10^(-5.04).*exp(1i*angle(s11)/.011); % correction for 50.4 dB offset
-s22 = s22*10^(-5.04).*exp(1i*angle(s11)/.011);
+s11 = s11*10^(-5.04);%.*exp(1i*angle(s11)/.011); % correction for 50.4 dB offset
+s22 = s22*10^(-5.04);%.*exp(1i*angle(s11)/.011);
 fudgeFactor = (unwrap(angle(s11)) - unwrap(angle(s22)))/2;
 meanFudge = mean(fudgeFactor);
 if (meanFudge > pi)
@@ -111,15 +111,15 @@ if any(strcmpi(plots,'debug'))
     grid on
     subplot(222)
     %yyaxis left
-    plot(m_frequency/1e9,unwrap(angle(s11)),m_frequency/1e9,unwrap(angle(t11)))
+    plot(m_frequency/1e9,unwrap(angle(s22)),m_frequency/1e9,unwrap(angle(t11)))
     ylabel('Phase')
     %yyaxis right
     %plot(m_frequency/1e9,unwrap(angle(s11))./k0 - correction_length + device_length)
     %ylabel('Offset (m)')
     xlabel('Frequency')
-    legend('s11', 't11','Location','best')%,'Orientation','horizontal')
+    legend('measured', 'theory','Location','best')%,'Orientation','horizontal')
     %legend('boxoff')
-    title(sprintf('%s (%0.2g mm width) S11 and S22 Phase',material,material_width*1e3))
+    title(sprintf('%s (%0.2g mm width) S22 Phase',material,material_width*1e3))
     grid on
     subplot(223)
     plot(m_frequency/1e9,abs(t11) ,m_frequency/1e9, abs(s11))
