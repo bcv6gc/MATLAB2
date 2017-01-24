@@ -1,4 +1,4 @@
-function results = HighPowerPerms2(device,material,material_width,airFile,materialFile,materialFile2,plots)
+function results = HighPowerNonMag(device,material,material_width,airFile,materialFile,materialFile2,plots)
 % constants
 eps0=8.85418782e-12; % F/m
 mu0=1.2566370614e-6; % H/m
@@ -11,47 +11,19 @@ switch device
     case {'coax','COAX','airline'}
         device_length = 50e-3;
 end
-reflectGap = 0.002; 
 %%
 if strcmpi(plots,'all')
     plots = {'perms','params','debug'};
 end
 %%
-% Use air measurements to correct offset from connectors
-[~,a21,a_frequency] = s2pToComplexSParam_v4(airFile);
-ak0 = 2*pi*a_frequency/c0;
-correction_length = device_length + median(unwrap(angle(a21))./ak0);
-l = (device_length - correction_length - material_width)/2;
-theory_l = (device_length - material_width)/2;
-t = material_width;
-%%
-% Use reflect measurements to correct for phase offset from the directional
-% couplers
-[reflect11,~,~] = s2pToComplexSParam_v4('C:\Users\jl3y9\Documents\MATLAB\Data\Calibration\Airline_50mm_30dBm_1-20-17.dat');
+% Air measurement
+[a11,a21,~] = s2pToComplexSParam_v4(airFile);
 
 %%
 % Get material data, electrically center the material in the device
-[s11,s21,~] = s2pToComplexSParam_v4(materialFile);
-[s22,s12,m_frequency] = s2pToComplexSParam_v4(materialFile2);
-s11 = abs(s11)*10^(-5.04).*exp(1i*(unwrap(angle(s11)) - unwrap(angle(1i*reflect11))));
-s22 = abs(s22)*10^(-5.04).*exp(1i*(unwrap(angle(s22)) - unwrap(angle(1i*reflect11))));
-fudgeFactor = (unwrap(angle(s11)) - unwrap(angle(s22)))/2;
-meanFudge = mean(fudgeFactor);
-if (meanFudge > pi)
-    n = floor(meanFudge/pi);
-    if (mean(unwrap(angle(s11))) > mean(unwrap(angle(s22))))
-        fudgeFactor = (unwrap(angle(s11)) + 2*n*pi  - unwrap(angle(s22)))/2;
-    elseif(mean(unwrap(angle(s22))) > mean(unwrap(angle(s11))))
-        fudgeFactor = (unwrap(angle(s11)) - 2*n*pi  - unwrap(angle(s22)))/2;
-    end
-end
-s11 = s11.*exp(1i*fudgeFactor);
-s22 = s22.*exp(-1i*fudgeFactor);
-% The above corrections are sparam*offset due to connectors * offset from
-% directional coupler * offset from reflect standard used to correct
-s11 = (s11 + s22)/2;
-s21 = (s21 + s12)/2;
-%@@ need to correct the phase for S11
+[m11,m21,~] = s2pToComplexSParam_v4(materialFile);
+[~,m12,m_frequency] = s2pToComplexSParam_v4(materialFile2);
+k0 = 2*pi*m_frequency/c0;
 %%
 % load material file if it exists
 matfiles = dir(sprintf('%s\\Materials\\%s*.dat',pwd));
@@ -76,31 +48,68 @@ else
     t_frequency = m_frequency;
 end
 %%
-%calculate some values
-k0 = 2*pi*m_frequency/c0;
-tk0 = 2*pi*t_frequency/c0;
-arg = (exp(-1i*4*k0*l) + s21.^2 - s11.^2)./(2*exp(-1i*2*k0*l).*s21);
-kt = acos(arg);
-results.kt = kt;
-R = s11./(exp(-1i*2*k0*l) - s21.*exp(-1i*kt));
-results.R = R;
-epsilon = kt./(t*k0).*(1 - R)./(1 + R);
-results.epsilon = epsilon;
-mu = kt./(t*k0).*(1 + R)./(1 - R);
-results.mu = mu;
-results.frequency = m_frequency;
-if ~isempty(permittivity)
-    tArg = (exp(-1i*4*tk0*theory_l) + t21.^2 - t11.^2)./(2*exp(-1i*2*tk0*theory_l).*t21);
-    tKt = acos(tArg);
-    results.tKt = tKt;
-    Rt = t11./(exp(-1i*2*tk0*theory_l) - t21.*exp(-1i*tKt));
-    results.Rt = Rt;
-    results.t_frequency = t_frequency;
-    results.epsilont = tKt./(t*tk0).*(1 - Rt)./(1 + Rt);
-    epsilont = tKt./(t*tk0).*(1 - Rt)./(1 + Rt);
-    results.mut = tKt./(t*tk0).*(1 + Rt)./(1 - Rt);
-    mut = tKt./(t*tk0).*(1 + Rt)./(1 - Rt);
+%
+time_air11=ifft(a11,8000);
+time_air21=ifft(a21,8000);
+time_med11=ifft(m11,8000);
+time_med21=ifft(m21,8000);
+time_med12=ifft(m12,8000);
+%% Time gating
+[tt,c1]=max(abs(time_air21));
+t=zeros(length(time_air21),1);
+t(:,1)=1:1:length(t);
+win_length = 25000;
+t_win=exp(-(t-c1).^2/win_length);
+%
+figure(2)
+plot(t_win*tt,'g--','linewidth',2)
+hold on
+plot(t,abs(time_air21),t,abs(time_med21)/10)
+legend('air','material')
+xlim([(c1 - 1000) (c1 + 1000)])
+%
+time_air11_filter=t_win.*time_air11;
+time_air21_filter=t_win.*time_air21;
+time_med11_filter=t_win.*time_med11;
+time_med21_filter=t_win.*time_med21;
+time_med12_filter=t_win.*time_med12;
+
+temp_air11=fft(time_air11_filter);
+temp_air21=fft(time_air21_filter);
+temp_med11=fft(time_med11_filter);
+temp_med21=fft(time_med21_filter);
+temp_med12=fft(time_med12_filter);
+
+filtered_air11=temp_air11(1:length(m_frequency));
+filtered_air21=temp_air21(1:length(m_frequency));
+filtered_med11=temp_med11(1:length(m_frequency));
+filtered_med21=temp_med21(1:length(m_frequency));
+filtered_med12=temp_med12(1:length(m_frequency));
+
+s11=filtered_med11./filtered_air11.*exp(-1i*k0*material_width);
+s21=filtered_med21./filtered_air21.*exp(-1i*k0*material_width);
+s12=filtered_med12./filtered_air21.*exp(-1i*k0*material_width);
+%{
+s11=m11./a11.*exp(-1i*k0*material_width);
+s21=m21./a21.*exp(-1i*k0*material_width);
+s12=m12./a21.*exp(-1i*k0*material_width);
+%}
+erx = zeros(size(m_frequency));
+for i=1:length(m_frequency)
+    f=m_frequency(i);
+    tt = fsolve(@(xx) get_s21v2(xx,f,material_width,s21(i),s12(i)),[1;0]);
+    erx(i)=tt(1)+1i*tt(2);
 end
+figure(5)
+plot(m_frequency,real(erx),m_frequency,imag(erx))
+xlabel('Frequency (GHz)')
+title('Coax Airline - 5mm HDPE Sample')
+legend('Real(\epsilon_r)','Imag(\epsilon_r)')
+legend('boxoff')
+grid on
+results.frequency = m_frequency;
+results.epsilon = erx;
+
 %%
 if any(strcmpi(plots,'debug'))
     figure;
