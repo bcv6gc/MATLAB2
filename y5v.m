@@ -1,40 +1,17 @@
-y5v20 = HighPowerNonMag('coax75','Y5V',0.0032,'75mm_coax_air_20dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_180_1-25-17.dat',' ');
-y5v25 = HighPowerNonMag('coax75','Y5V',0.0032,'75mm_coax_air_25dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_180_1-25-17.dat',' ');
-y5v30 = HighPowerNonMag('coax75','Y5V',0.0032,'75mm_coax_air_30dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_180_1-25-17.dat',' ');
-y5v35 = HighPowerNonMag('coax75','Y5V',0.0032,'75mm_coax_air_35dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_180_1-25-17.dat',' ');
-y5v40 = HighPowerNonMag('coax75','Y5V',0.0032,'75mm_coax_air_40dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_180_1-25-17.dat',' ');
-y5v45 = HighPowerNonMag('coax75','Y5V',0.0032,'75mm_coax_air_45dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_180_1-25-17.dat',' ');
-y5v50 = HighPowerNonMag('coax75','Y5V',0.0032,'75mm_coax_air_50dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_180_1-25-17.dat',' ');
+y5v20 = HighPowerPerms2('coax75','wax',0.0032,'75mm_coax_air_20dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_180_1-25-17.dat',' ');
+y5v25 = HighPowerPerms2('coax75','wax',0.0032,'75mm_coax_air_25dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_180_1-25-17.dat',' ');
+y5v30 = HighPowerPerms2('coax75','wax',0.0032,'75mm_coax_air_30dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_180_1-25-17.dat',' ');
+y5v35 = HighPowerPerms2('coax75','wax',0.0032,'75mm_coax_air_35dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_180_1-25-17.dat',' ');
+y5v40 = HighPowerPerms2('coax75','wax',0.0032,'75mm_coax_air_40dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_180_1-25-17.dat',' ');
+y5v45 = HighPowerPerms2('coax75','wax',0.0032,'75mm_coax_air_45dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_180_1-25-17.dat',' ');
+y5v50 = HighPowerPerms2('coax75','wax',0.0032,'75mm_coax_air_50dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_180_1-25-17.dat',' ');
 %%
-figure;
-plot(y5v20.frequency/1e9,(real(y5v25.epsilon)- real(y5v20.epsilon))./real(y5v20.epsilon)*100,...
-    y5v20.frequency/1e9,(real(y5v30.epsilon)- real(y5v20.epsilon))./real(y5v20.epsilon)*100,...
-    y5v20.frequency/1e9,(real(y5v35.epsilon)- real(y5v20.epsilon))./real(y5v20.epsilon)*100,...
-    y5v20.frequency/1e9,(real(y5v40.epsilon)- real(y5v20.epsilon))./real(y5v20.epsilon)*100,...
-    y5v20.frequency/1e9,(real(y5v45.epsilon)- real(y5v20.epsilon))./real(y5v20.epsilon)*100,...
-    y5v20.frequency/1e9,(real(y5v50.epsilon)- real(y5v20.epsilon))./real(y5v20.epsilon)*100)
-xlabel('frequency (GHz)')
-ylabel('relative real permittivity % change')
-legend('25dBm','30dBm','35dBm','40dBm','45dBm','50dBm','Location','best')
-legend('boxoff')
-title('Power dependence of \epsilon\prime for a 3.2mm BaTiO_3 sample')
-xlim([min(y5v20.frequency/1e9) max(y5v20.frequency/1e9)])
-set(gca,'FontSize',12)
-grid on
-%ylim([0 4])
-figure;
-plot(y5v20.frequency/1e9,(imag(y5v25.epsilon)- imag(y5v20.epsilon))./imag(y5v20.epsilon)*100,...
-    y5v20.frequency/1e9,(imag(y5v30.epsilon)- imag(y5v20.epsilon))./imag(y5v20.epsilon)*100,...
-    y5v20.frequency/1e9,(imag(y5v35.epsilon)- imag(y5v20.epsilon))./imag(y5v20.epsilon)*100,...
-    y5v20.frequency/1e9,(imag(y5v40.epsilon)- imag(y5v20.epsilon))./imag(y5v20.epsilon)*100,...
-    y5v20.frequency/1e9,(imag(y5v45.epsilon)- imag(y5v20.epsilon))./imag(y5v20.epsilon)*100,...
-    y5v20.frequency/1e9,(imag(y5v50.epsilon)- imag(y5v20.epsilon))./imag(y5v20.epsilon)*100)
-xlabel('frequency (GHz)')
-ylabel('relative imaginary permittivity % change')
-legend('25dBm','30dBm','35dBm','40dBm','45dBm','50dBm','Location','best')
-legend('boxoff')
-title('Power dependence of \epsilon\prime\prime for a 3.2mm BaTiO_3 sample')
-xlim([min(y5v20.frequency/1e9) max(y5v20.frequency/1e9)])
-set(gca,'FontSize',12)
-grid on
-%}
+y5v20td = HighPowerNonMag('coax75','Y5v',0.0032,'75mm_coax_air_20dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_180_1-25-17.dat',' ');
+y5v25td = HighPowerNonMag('coax75','Y5V',0.0032,'75mm_coax_air_25dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_180_1-25-17.dat',' ');
+y5v30td = HighPowerNonMag('coax75','Y5V',0.0032,'75mm_coax_air_30dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_180_1-25-17.dat',' ');
+y5v35td = HighPowerNonMag('coax75','Y5V',0.0032,'75mm_coax_air_35dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_180_1-25-17.dat',' ');
+y5v40td = HighPowerNonMag('coax75','Y5V',0.0032,'75mm_coax_air_40dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_180_1-25-17.dat',' ');
+y5v45td = HighPowerNonMag('coax75','Y5V',0.0032,'75mm_coax_air_45dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_180_1-25-17.dat',' ');
+y5v50td = HighPowerNonMag('coax75','Y5V',0.0032,'75mm_coax_air_50dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_1-25-17.dat','75mm_coax_10%Y5V_3p2mm_20dbm_180_1-25-17.dat',' ');
+%%
+PlotEpsilonPlusTimeDomain(y5v20,y5v25,y5v30,y5v35,y5v40,y5v45,y5v50,y5v20td,y5v25td,y5v30td,y5v35td,y5v40td,y5v45td,y5v50td,0.0032,'BaTi0_3')
