@@ -1,39 +1,36 @@
-hdpe20 = HighPowerNonMag('coax','hdpe',0.005,'50mm_coax_air_20dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_20dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_50dbm_1-24-17.dat',' ');
-hdpe25 = HighPowerNonMag('coax','hdpe',0.005,'50mm_coax_air_25dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_25dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_50dbm_1-24-17.dat',' ');
-hdpe30 = HighPowerNonMag('coax','hdpe',0.005,'50mm_coax_air_30dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_30dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_50dbm_1-24-17.dat',' ');
-hdpe35 = HighPowerNonMag('coax','hdpe',0.005,'50mm_coax_air_35dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_35dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_50dbm_1-24-17.dat',' ');
-hdpe40 = HighPowerNonMag('coax','hdpe',0.005,'50mm_coax_air_40dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_40dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_50dbm_1-24-17.dat',' ');
-hdpe45 = HighPowerNonMag('coax','hdpe',0.005,'50mm_coax_air_45dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_45dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_50dbm_1-24-17.dat',' ');
-hdpe50 = HighPowerNonMag('coax','hdpe',0.005,'50mm_coax_air_50dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_50dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_50dbm_1-24-17.dat',' ');
+hdpe20 = HighPowerPerms2('coax75','wax',0.005,'50mm_coax_air_20dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_20dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_20dbm_1-24-17.dat',' ');
+hdpe25 = HighPowerPerms2('coax75','wax',0.005,'50mm_coax_air_25dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_25dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_25dbm_1-24-17.dat',' ');
+hdpe30 = HighPowerPerms2('coax75','wax',0.005,'50mm_coax_air_30dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_30dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_30dbm_1-24-17.dat',' ');
+hdpe35 = HighPowerPerms2('coax75','wax',0.005,'50mm_coax_air_35dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_35dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_35dbm_1-24-17.dat',' ');
+hdpe40 = HighPowerPerms2('coax75','wax',0.005,'50mm_coax_air_40dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_40dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_40dbm_1-24-17.dat',' ');
+hdpe45 = HighPowerPerms2('coax75','wax',0.005,'50mm_coax_air_45dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_45dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_45dbm_1-24-17.dat',' ');
+hdpe50 = HighPowerPerms2('coax75','wax',0.005,'50mm_coax_air_50dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_50dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_50dbm_1-24-17.dat',' ');
 %%
-figure;
-plot(hdpe20.frequency/1e9,(real(hdpe25.epsilon)- real(hdpe20.epsilon))./real(hdpe20.epsilon)*100,...
-    hdpe20.frequency/1e9,(real(hdpe30.epsilon)- real(hdpe20.epsilon))./real(hdpe20.epsilon)*100,...
-    hdpe20.frequency/1e9,(real(hdpe35.epsilon)- real(hdpe20.epsilon))./real(hdpe20.epsilon)*100,...
-    hdpe20.frequency/1e9,(real(hdpe40.epsilon)- real(hdpe20.epsilon))./real(hdpe20.epsilon)*100,...
-    hdpe20.frequency/1e9,(real(hdpe45.epsilon)- real(hdpe20.epsilon))./real(hdpe20.epsilon)*100,...
-    hdpe20.frequency/1e9,(real(hdpe50.epsilon)- real(hdpe20.epsilon))./real(hdpe20.epsilon)*100)
-xlabel('frequency (GHz)')
-ylabel('relative real permittivity % change')
-legend('25dBm','30dBm','35dBm','40dBm','45dBm','50dBm','Location','best')
-legend('boxoff')
-title('Power dependence of \epsilon\prime for a 5mm HDPE sample')
-xlim([min(hdpe20.frequency/1e9) max(hdpe20.frequency/1e9)])
-set(gca,'FontSize',12)
-grid on
-%ylim([0 4])
-figure;
-plot(hdpe20.frequency/1e9,(imag(hdpe25.epsilon)- imag(hdpe20.epsilon))./imag(hdpe20.epsilon)*100,...
-    hdpe20.frequency/1e9,(imag(hdpe30.epsilon)- imag(hdpe20.epsilon))./imag(hdpe20.epsilon)*100,...
-    hdpe20.frequency/1e9,(imag(hdpe35.epsilon)- imag(hdpe20.epsilon))./imag(hdpe20.epsilon)*100,...
-    hdpe20.frequency/1e9,(imag(hdpe40.epsilon)- imag(hdpe20.epsilon))./imag(hdpe20.epsilon)*100,...
-    hdpe20.frequency/1e9,(imag(hdpe45.epsilon)- imag(hdpe20.epsilon))./imag(hdpe20.epsilon)*100,...
-    hdpe20.frequency/1e9,(imag(hdpe50.epsilon)- imag(hdpe20.epsilon))./imag(hdpe20.epsilon)*100)
-xlabel('frequency (GHz)')
-ylabel('relative imaginary permittivity % change')
-legend('25dBm','30dBm','35dBm','40dBm','45dBm','50dBm','Location','best')
-legend('boxoff')
-title('Power dependence of \epsilon\prime\prime for a 5mm HDPE sample')
-xlim([min(hdpe20.frequency/1e9) max(hdpe20.frequency/1e9)])
-set(gca,'FontSize',12)
-grid on
+%{
+hdpe20td = HighPowerNonMag('coax','hdpe',0.005,'50mm_coax_air_20dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_20dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_50dbm_1-24-17.dat',' ');
+hdpe25td = HighPowerNonMag('coax','hdpe',0.005,'50mm_coax_air_25dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_25dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_50dbm_1-24-17.dat',' ');
+hdpe30td = HighPowerNonMag('coax','hdpe',0.005,'50mm_coax_air_30dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_30dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_50dbm_1-24-17.dat',' ');
+hdpe35td = HighPowerNonMag('coax','hdpe',0.005,'50mm_coax_air_35dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_35dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_50dbm_1-24-17.dat',' ');
+hdpe40td = HighPowerNonMag('coax','hdpe',0.005,'50mm_coax_air_40dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_40dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_50dbm_1-24-17.dat',' ');
+hdpe45td = HighPowerNonMag('coax','hdpe',0.005,'50mm_coax_air_45dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_45dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_50dbm_1-24-17.dat',' ');
+hdpe50td = HighPowerNonMag('coax','hdpe',0.005,'50mm_coax_air_50dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_50dbm_1-24-17.dat','50mm_coax_5p1mm_hdpe_50dbm_1-24-17.dat',' ');
+%%
+%}
+%PlotEpsilonPlusTimeDomain(hdpe20,hdpe25,hdpe30,hdpe35,hdpe40,hdpe45,hdpe50,hdpe20td,hdpe25td,hdpe30td,hdpe35td,hdpe40td,hdpe45td,hdpe50td,0.0032,'BaTi0_3')
+num_frequencies = length(hdpe20.epsilon);
+hdpe_power_epsilon = zeros(num_frequencies,7);
+hdpe_power_epsilon(:,1) = ones(num_frequencies,1)*mean(hdpe20.epsilon);
+hdpe_power_epsilon(:,2) = (hdpe25.epsilon - hdpe20.epsilon) + mean(hdpe20.epsilon);
+hdpe_power_epsilon(:,3) = (hdpe30.epsilon - hdpe20.epsilon) + mean(hdpe20.epsilon);
+hdpe_power_epsilon(:,4) = (hdpe35.epsilon - hdpe20.epsilon) + mean(hdpe20.epsilon);
+hdpe_power_epsilon(:,5) = (hdpe40.epsilon - hdpe20.epsilon) + mean(hdpe20.epsilon);
+hdpe_power_epsilon(:,6) = (hdpe45.epsilon - hdpe20.epsilon) + mean(hdpe20.epsilon);
+hdpe_power_epsilon(:,7) = (hdpe50.epsilon - hdpe20.epsilon) + mean(hdpe20.epsilon);
+hdpe_power_mu = zeros(num_frequencies,7);
+hdpe_power_mu(:,1) = ones(num_frequencies,1)*mean(hdpe20.mu);
+hdpe_power_mu(:,2) = (hdpe25.mu - hdpe20.mu) + mean(hdpe20.mu);
+hdpe_power_mu(:,3) = (hdpe30.mu - hdpe20.mu) + mean(hdpe20.mu);
+hdpe_power_mu(:,4) = (hdpe35.mu - hdpe20.mu) + mean(hdpe20.mu);
+hdpe_power_mu(:,5) = (hdpe40.mu - hdpe20.mu) + mean(hdpe20.mu);
+hdpe_power_mu(:,6) = (hdpe45.mu - hdpe20.mu) + mean(hdpe20.mu);
+hdpe_power_mu(:,7) = (hdpe50.mu - hdpe20.mu) + mean(hdpe20.mu);
