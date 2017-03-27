@@ -23,7 +23,8 @@ text(50,device3(51),sprintf('%0.1f V/cm \\rightarrow',device3(51)),'HorizontalAl
 text(50,device4(51),sprintf('%0.1f V/cm \\rightarrow',device4(51)),'HorizontalAlignment','right','FontSize',12);
 text(50,device5(51),sprintf('%0.1f V/cm \\rightarrow',device5(51)),'HorizontalAlignment','right','FontSize',12);
 text(2,85,'Damage to electronic equipment \uparrow','HorizontalAlignment','left','FontSize',12);
-text(50,10,'Maximum output of amplifier \rightarrow','HorizontalAlignment','right','FontSize',12);
+text(2,17,'Soft upset of equipment \uparrow','HorizontalAlignment','left','FontSize',12);
+%text(50,10,'Maximum output of amplifier \rightarrow','HorizontalAlignment','right','FontSize',12);
 set(gca,'FontSize',13)
 ylim([1 1e3])
 legend('boxoff')
