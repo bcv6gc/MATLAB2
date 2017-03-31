@@ -27,8 +27,8 @@ for pow = 10:50
     %}
     %{
     airfile = sprintf('75mm_coax_air_%ddbm_3-24-17.dat',pow);
-    matfile = sprintf('75mm_coax_10_p_Y5V_5p64mm_%ddbm_3-24-17.dat',pow);
-    matfile180 = sprintf('75mm_coax_10_p_Y5V-flipped_5p64mm_%ddbm_3-24-17.dat',pow);
+    matfile = sprintf('75mm_coax_20_p_z5u_4p54%ddbm_3-24-17.dat',pow);
+    matfile180 = sprintf('75mm_coax_20_p_z5u-flipped_4p54_%ddbm_3-24-17.dat',pow);
     width = 0.00564;
     %}
     %{
@@ -37,23 +37,32 @@ for pow = 10:50
     matfile180 = sprintf('75mm_coax_1_p_Y5V-flipped_5p00mm_%ddbm_3-24-17.dat',pow);
     width = 0.005;
     %}
-    %bto_dat = HighPowerPerms2('coax75','wax',width,airfile,matfile,matfile180,' ');
-    bto_dat = HighPowerNonMag('coax75','wax',width,airfile,matfile,matfile180,' ');
+    %{
+    airfile = sprintf('75mm_coax_air_%ddbm_3-24-17.dat',pow);
+    matfile = sprintf('75mm_coax_1_p_Y5V_5p00mm_%ddbm_3-24-17.dat',pow);
+    matfile180 = sprintf('75mm_coax_1_p_Y5V-flipped_5p00mm_%ddbm_3-24-17.dat',pow);
+    width = 0.005;
+    %}
+    %
+    bto_dat = HighPowerPerms2('coax75','wax',width,airfile,matfile,matfile180,' ');
+    %bto_dat = HighPowerNonMag('coax75','wax',width,airfile,matfile,matfile180,' ');
     epsilon(:,pow-9) = bto_dat.epsilon;
-    %mu(:,pow-9) = bto_dat.mu;    
+    mu(:,pow-9) = bto_dat.mu;    
 end
 diffEpsilon = diff(epsilon,1,2);
-%diffMu = diff(mu,1,2);
+diffMu = diff(mu,1,2);
 figure;
 subplot(211)
-plot(bto_dat.frequency/1e9,real(diffEpsilon(:,20:end)))
+plot(bto_dat.frequency/1e9,real(diffEpsilon(:,30:end)))
 xlabel('frequency (GHz)')
 ylabel('\epsilon\prime_r')
+grid on
 subplot(212)
-plot(bto_dat.frequency/1e9,imag(diffEpsilon(:,20:end)))
+plot(bto_dat.frequency/1e9,imag(diffEpsilon(:,30:end)))
 xlabel('frequency (GHz)')
 ylabel('\epsilon\prime\prime_r')
-%{
+grid on
+%
 figure;
 subplot(211)
 plot(bto_dat.frequency/1e9,real(diffMu))
@@ -65,13 +74,13 @@ xlabel('frequency (GHz)')
 ylabel('\mu\prime\prime_r')
 %}
 figure;
-contourf(11:50,bto_dat.frequency/1e9,real(diffEpsilon))
+contourf(40:50,bto_dat.frequency/1e9,real(diffEpsilon(:,30:end)))
 xlabel('power (dBm)')
 ylabel('frequency (GHz)')
 title('Power response of \epsilon\prime')
 colorbar
 figure;
-contourf(11:50,bto_dat.frequency/1e9,imag(diffEpsilon))
+contourf(40:50,bto_dat.frequency/1e9,imag(diffEpsilon(:,30:end)))
 xlabel('power (dBm)')
 ylabel('frequency (GHz)')
 title('Power response of \epsilon\prime\prime')

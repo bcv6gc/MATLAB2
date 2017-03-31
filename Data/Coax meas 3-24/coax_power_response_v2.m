@@ -7,15 +7,15 @@ for pow = 10:50
     s21(:,pow-9) = s_21;
 end
 subplot(211)
-plot(frequency/1e9,angle(s11))
-xlabel('power (dBm)')
-ylabel('magnitude')
-title('s11')
-subplot(212)
 plot(frequency/1e9,angle(s21))
-xlabel('power (dBm)')
+xlabel('frequency (GHz)')
 ylabel('magnitude')
-title('s21')
+title('Phase S21')
+subplot(212)
+plot(frequency/1e9,abs(s21))
+xlabel('frequency (GHz)')
+ylabel('magnitude')
+title('Amplitude S21')
 figure;
 contourf(10:50,frequency/1e9,abs(s11))
 colorbar
