@@ -11,6 +11,7 @@ pzt2_40 = HighPowerPerms2('stripline','PZT',0.001,'stripline_air_40dBm_1-25-17.d
 pzt2_45 = HighPowerPerms2('stripline','PZT',0.001,'stripline_air_45dBm_1-25-17.dat','Steve_dep311_0p15_stripline_45dbm_1-25-17.dat','Steve_dep311_0p15_stripline_45dbm_1-25-17.dat',' ');
 pzt2_50 = HighPowerPerms2('stripline','PZT',0.001,'stripline_air_50dBm_1-25-17.dat','Steve_dep311_0p15_stripline_50dbm_1-25-17.dat','Steve_dep311_0p15_stripline_50dbm_1-25-17.dat',' ');
 freq = pzt25.frequency/1e9;
+%{
 figure;
 plot(freq,real(pzt25.epsilon),'r',freq,real(pzt2_25.epsilon),'r--',freq,real(pzt30.epsilon),'y',freq,real(pzt2_30.epsilon),'y--',...
     freq,real(pzt35.epsilon),'g',freq,real(pzt2_35.epsilon),'g--',freq,real(pzt40.epsilon),'c',freq,real(pzt2_40.epsilon),'c--',...
@@ -69,3 +70,32 @@ title('Polarized and Depolarized PZT')
 legend('Polarized','Depolarized','Location','northwest')
 legend('boxoff')
 grid on
+%}
+figure;
+plot(freq,real(pzt40.epsilon),'r',freq,real(pzt2_40.epsilon),'r--',...
+    freq,real(pzt45.epsilon),'b',freq,real(pzt2_45.epsilon),'b--',...
+    freq,real(pzt50.epsilon),'k',freq,real(pzt2_50.epsilon),'k--',...
+    freq,imag(pzt40.epsilon),'r',freq,imag(pzt2_40.epsilon),'r--',...
+    freq,imag(pzt45.epsilon),'b',freq,imag(pzt2_45.epsilon),'b--',...
+    freq,imag(pzt50.epsilon),'k',freq,imag(pzt2_50.epsilon),'k--')
+xlabel('frequency (GHz)')
+ylabel('permittivity')
+title('Polarized and Depolarized')
+legend('40dBm P','40dBm D','45dBm P','45dBm D','50dBm P','50dBm D','Location','northwest')
+legend('boxoff')
+grid on
+set(gca,'fontsize',14)
+figure;
+plot(freq,real(pzt40.mu),'r',freq,real(pzt2_40.mu),'r--',...
+    freq,real(pzt45.mu),'b',freq,real(pzt2_45.mu),'b--',...
+    freq,real(pzt50.mu),'k',freq,real(pzt2_50.mu),'k--',...
+    freq,imag(pzt40.mu),'r',freq,imag(pzt2_40.mu),'r--',...
+    freq,imag(pzt45.mu),'b',freq,imag(pzt2_45.mu),'b--',...
+    freq,imag(pzt50.mu),'k',freq,imag(pzt2_50.mu),'k--')
+xlabel('frequency (GHz)')
+ylabel('permeability')
+title('Polarized and Depolarized')
+legend('40dBm P','40dBm D','45dBm P','45dBm D','50dBm P','50dBm D','Location','northwest')
+legend('boxoff')
+grid on
+set(gca,'fontsize',14)
