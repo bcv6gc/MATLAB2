@@ -2,7 +2,7 @@ function [perms,diffPerms]=PlotPowerDependent(airfile,matfile,mat180,powers,widt
 % This function has inputs: files which is a struct of files inculding the
 % air file, material file, and the material 180 file. These are passed with
 % the range of powers that these air and material files are tested under.
-epsilon = zeros(201,length(powers));
+epsilon = zeros(301,length(powers));
 mu = epsilon;
 for pow = 1:length(powers)
     a_file = sprintf(airfile,powers(pow));
@@ -27,13 +27,16 @@ xlabel('frequency (GHz)')
 ylabel('\epsilon\prime_r')
 title(title_words)
 legend(legenddata{2:end})
+legend('Location','eastoutside')
 grid on
 subplot(212)
-plot(mat_dat.frequency/1e9,imag(diffEpsilon))
+plot(mat_dat.frequency/1e9,-imag(diffEpsilon))
 xlabel('frequency (GHz)')
 ylabel('\epsilon\prime\prime_r')
+legend(legenddata{2:end})
+legend('Location','eastoutside')
 grid on
-set(gca,'FontSize',14)
+%set(gca,'FontSize',14)
 %%
 figure;
 subplot(211)
@@ -42,13 +45,16 @@ xlabel('frequency (GHz)')
 ylabel('\epsilon\prime_r')
 title(title_words)
 legend(legenddata)
+legend('Location','eastoutside')
 grid on
 subplot(212)
-plot(mat_dat.frequency/1e9,imag(epsilon))
+plot(mat_dat.frequency/1e9,-imag(epsilon))
 xlabel('frequency (GHz)')
 ylabel('\epsilon\prime\prime_r')
+legend(legenddata)
+legend('Location','eastoutside')
 grid on
-set(gca,'FontSize',14)
+%set(gca,'FontSize',14)
 %%
 figure;
 subplot(211)
@@ -56,26 +62,32 @@ plot(mat_dat.frequency/1e9,real(diffMu))
 xlabel('frequency (GHz)')
 ylabel('\mu\prime_r')
 legend(legenddata{2:end})
+legend('Location','eastoutside')
 grid on
 title(title_words)
 subplot(212)
-plot(mat_dat.frequency/1e9,imag(diffMu))
+plot(mat_dat.frequency/1e9,-imag(diffMu))
 xlabel('frequency (GHz)')
 grid on
+legend(legenddata{2:end})
+legend('Location','eastoutside')
 ylabel('\mu\prime\prime_r')
-set(gca,'FontSize',14)
+%set(gca,'FontSize',14)
 %%
 figure;
 subplot(211)
 plot(mat_dat.frequency/1e9,real(mu))
 xlabel('frequency (GHz)')
-ylabel('\epsilon\prime_r')
+ylabel('\mu\prime_r')
 title(title_words)
 legend(legenddata)
+legend('Location','eastoutside')
 grid on
 subplot(212)
-plot(mat_dat.frequency/1e9,imag(mu))
+plot(mat_dat.frequency/1e9,-imag(mu))
 xlabel('frequency (GHz)')
-ylabel('\epsilon\prime\prime_r')
+ylabel('\mu\prime\prime_r')
+legend(legenddata)
+legend('Location','eastoutside')
 grid on
-set(gca,'FontSize',14)
+%set(gca,'FontSize',14)
