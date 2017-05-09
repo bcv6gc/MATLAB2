@@ -1,0 +1,10 @@
+permittivity = 2000;
+permeability = 1;
+frequency = 3e9;
+omega = 2*pi*frequency;
+c = 3e8;
+thickness = 0.005; 
+gamma = (sqrt(permeability/permittivity) - 1)/(sqrt(permeability/permittivity) + 1);
+tee = exp(-1i*omega/c*sqrt(permeability*permittivity)*thickness);
+s11 = (gamma * (1 - tee.^2))/(1 - gamma.^2*tee.^2);
+s21 = (tee * (1 - gamma.^2))/(1 - gamma.^2*tee.^2);
