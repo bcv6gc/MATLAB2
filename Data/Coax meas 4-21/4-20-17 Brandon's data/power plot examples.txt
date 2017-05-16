@@ -34,4 +34,31 @@ dataArray = textscan(fileID, formatSpec, 'Delimiter', delimiter, 'HeaderLines' ,
 'ReturnOnError', false);
 
 Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('HighPowerPerms2', 'C:\Users\jl3y9\Documents\MATLAB\HighPowerPerms2.m', 36)" style="font-weight:bold">HighPowerPerms2</a> (<a href="matlab: opentoline('C:\Users\jl3y9\Documents\MATLAB\HighPowerPerms2.m',36,0)">line 36</a>)
-[s11,s21,~] = s2
+[s11,s21,~] = s2pToComplexSParam_v4(materialFile);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('PlotPowerDependent', 'C:\Users\jl3y9\Documents\MATLAB\PlotPowerDependent.m', 11)" style="font-weight:bold">PlotPowerDependent</a> (<a href="matlab: opentoline('C:\Users\jl3y9\Documents\MATLAB\PlotPowerDependent.m',11,0)">line 11</a>)
+    mat_dat = HighPowerPerms2('coax75','wax',width,a_file,m_file,m_file180,' ');
+} 
+[perms,diffPerms]=PlotPowerDependent('75mm_coax_air_%ddbm_3-23-17.dat','75mm_coax_BTO-5%-300nm_5p75mm_%ddbm_3-23-17.dat','75mm_coax_BTO-5%-300nm-flipped_5p75mm_%ddbm_3-23-17.dat',[20:1:50],.00575,'50nm BTO with 10% loading');
+{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('textscan')" style="font-weight:bold">textscan</a>
+Invalid file identifier. Use fopen to generate a valid file identifier.
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('s2pToComplexSParam_v4', 'C:\Users\jl3y9\Documents\MATLAB\s2pToComplexSParam_v4.m', 8)" style="font-weight:bold">s2pToComplexSParam_v4</a> (<a href="matlab: opentoline('C:\Users\jl3y9\Documents\MATLAB\s2pToComplexSParam_v4.m',8,0)">line 8</a>)
+dataArray = textscan(fileID, formatSpec, 'Delimiter', delimiter, 'HeaderLines' ,startRow-1,
+'ReturnOnError', false);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('HighPowerPerms2', 'C:\Users\jl3y9\Documents\MATLAB\HighPowerPerms2.m', 36)" style="font-weight:bold">HighPowerPerms2</a> (<a href="matlab: opentoline('C:\Users\jl3y9\Documents\MATLAB\HighPowerPerms2.m',36,0)">line 36</a>)
+[s11,s21,~] = s2pToComplexSParam_v4(materialFile);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('PlotPowerDependent', 'C:\Users\jl3y9\Documents\MATLAB\PlotPowerDependent.m', 11)" style="font-weight:bold">PlotPowerDependent</a> (<a href="matlab: opentoline('C:\Users\jl3y9\Documents\MATLAB\PlotPowerDependent.m',11,0)">line 11</a>)
+    mat_dat = HighPowerPerms2('coax75','wax',width,a_file,m_file,m_file180,' ');
+} 
+<a href="matlab: opentoline('C:\Users\jl3y9\Documents\MATLAB\s2pToComplexSParam_v4.m',8,1)">8   </a>dataArray = textscan(fileID, formatSpec, 'Delimiter', delimiter, 'HeaderLines' ,startRow-1, 'ReturnOnError', false);
+size(dataArray)
+{Undefined function or variable 'dataArray'.
+} 
+<a href="matlab: opentoline('C:\Users\jl3y9\Documents\MATLAB\s2pToComplexSParam_v4.m',8,1)">8   </a>dataArray = textscan(fileID, formatSpec, 'Delimiter', delimiter, 'HeaderLines' ,startRow-1, 'ReturnOnError', false);
+dbcont
+if system_dependent('IsDebugMode')==1, dbcont; end
+[perms,diffPerms]=PlotPowerDependent('75mm_coax_air_%ddbm_3-23-17.dat','75mm_coax_paraffin-wax_6p42mm_%ddbm_3-24-17.dat','75mm_coax_paraffin-wax-flipped_6p42mm_%ddbm_3-24-17.dat',[20:1:50],.00575,'50nm BTO with 10% loading');
+close all
