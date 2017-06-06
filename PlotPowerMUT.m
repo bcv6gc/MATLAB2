@@ -14,7 +14,7 @@ for pow = 1:length(matfilestruct.powers)
     matepsilon(:,pow) = mat_dat.epsilon;
     legenddata{pow} = sprintf('Power = %d dBm',matfilestruct.powers(pow)); %#ok<AGROW>
 end
-lengthMed = 201;
+lengthMed = 301;
 medepsilon = zeros(lengthMat,length(medfilestruct.powers));
 medepsilon2 = zeros(size(matepsilon));
 for pow = 1:length(medfilestruct.powers)
@@ -35,7 +35,8 @@ end
 if matfilestruct.powers ~= medfilestruct.powers
     medepsilon = interp1(medfilestruct.powers,medepsilon,matfilestruct.powers);
 end
-epsilon = Bruggeman(matepsilon, medepsilon, activevolume);
+%epsilon = Bruggeman(matepsilon, medepsilon, 1-activevolume);
+epsilon = MaxwellGarnett(matepsilon, medepsilon, activevolume);
 
 diffepsilon = epsilon(:,2:end) - repmat(epsilon(:,1),[1,length(matfilestruct.powers)-1]);
 %%

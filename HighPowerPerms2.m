@@ -11,7 +11,7 @@ switch device
     case {'coax','COAX','airline'}
         device_length = 50e-3;
     case {'coax75','COAX75'}
-        device_length = 50e-3;
+        device_length = 75e-3;
 end
 reflectGap = 0.002; 
 %%
