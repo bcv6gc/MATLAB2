@@ -1,5 +1,6 @@
 function active_perm = InverseMaxwellGarnett(eff_perm, med_perm, active_volume)
-media_volume = 1-active_volume;
-active_perm = ((2+media_volume)*eff_perm - 2*active_volume*med_perm)...
-    .*med_perm./((1+2*media_volume)*med_perm - active_volume*eff_perm);
+
+active_perm = med_perm.*(2*med_perm*active_volume + active_volume*eff_perm...
+    -2*med_perm+2*eff_perm)./(2*med_perm*active_volume + active_volume*eff_perm...
+    + med_perm - eff_perm);
 end

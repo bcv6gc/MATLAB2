@@ -1,5 +1,5 @@
-function active_perm = Bruggeman(eff_perm, med_perm, active_volume)
-media_volume = 1-active_volume;
-active_perm = ((active_volume-2*media_volume)*med_perm + 2*eff_perm)...
-    .*eff_perm./(media_volume*(med_perm-eff_perm)+active_volume*(med_perm+2*eff_perm));
+function effective_perm = Bruggeman(active_perm, med_perm, active_volume)
+effective_perm = med_perm + 3*active_volume.*med_perm.*...
+    (active_perm - med_perm)./(active_perm + 2*med_perm - ...
+    active_volume.*(active_perm - med_perm));
 end
