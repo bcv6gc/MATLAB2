@@ -85,7 +85,7 @@ time_med12=ifft(m12,8000);
 [tt,c1]=max(abs(time_air21));
 t=zeros(length(time_air21),1);
 t(:,1)=1:1:length(t);
-win_length = 10000;
+win_length = 1e2; %@@@ was 1e4
 t_win=exp(-(t-c1).^2/win_length);
 %{
 figure(2)
